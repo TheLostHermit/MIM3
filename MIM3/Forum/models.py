@@ -11,7 +11,7 @@ from django.core.validators import MinValueValidator
 class Organization(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
     about = models.TextField(null=False, blank=False)
-    logo = models.ImageField(null=True, blank=True)
+    logo = models.ImageField(null=True, blank=True, upload_to='organization_logos')
 
     def __str__(self):
         return f"{self.name}"
@@ -51,18 +51,19 @@ class Post(models.Model):
 
 # associates dates and times with posts (projects) so that users can volunteer to participate
 class Event(models.Model):
-    date = models.DateField(default=timezone.now, null=True, blank=True, validators=[MinValueValidator(timezone.now, "valid values are not in the past")])
+    date = models.DateField(default=timezone.now, null=True, blank=True, validators=[MinValueValidator(timezone.now().date(), "valid values are not in the past")])
     time = models.TimeField(default=timezone.now, null=True, blank=True)
     open = models.BooleanField(default=True, null=False, blank=False)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='project_times')
 
     def __str__(self):
-        return f"Event from {self.project}"
+        return f"Event from {self.post.title}"
 
 # multiple images can be used for one post. Is icon determines whether the image can be used in the project display
 class PostImage(models.Model):
 
-    image = models.ImageField
+    #
+    image = models.ImageField(upload_to='post_images', default='default.png')
     name = models.CharField(max_length=100, default="image")
     is_icon = models.BooleanField(default=False, null=False, blank=False)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='related_images')
@@ -80,7 +81,7 @@ class Message(models.Model):
 
     def __str__(self):
         timestring = self.timestamp.strftime("%d/%m/%Y | %H : %M")
-        return f"Message at {timestring} from {self.sender} of {self.sending_org}"
+        return f"Message at {timestring} UTC from {self.sender} of {self.sending_org}"
 
 # model linking volunteers to events they want to volunteer for
 class Bid(models.Model):
@@ -92,8 +93,8 @@ class Bid(models.Model):
         ('CP', 'Complete')
     ]
 
-    bidder = models.OneToOneField(Profile, on_delete=models.CASCADE)
-    event = models.OneToOneField(Event, on_delete=models.CASCADE)
+    bidder = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='bids')
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='bids')
     status = models.CharField(max_length=2, choices=STATUS_OPTIONS, default=STATUS_OPTIONS[0][0])
 
     def __str__(self):
