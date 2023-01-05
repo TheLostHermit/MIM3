@@ -1,0 +1,46 @@
+{% extends "Forum/layouts/sidebar_layout.html" %}
+{% load static %}
+
+{% block title %}
+{{ post.title }}
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+
+{% block body %}
+<h1>{{ post.title }}</h1>
+Written on {{ post.timestamp }} by {{ post.author }} from {{ post.organization }}
+<hr>
+
+{% for image in post.related_images.all %}
+    <img src="{{ image.image.url }}" alt="{{ image.image }}">
+{% empty %}
+    No images were found
+
+{% endfor %}
+
+<hr>
+{{ post.body }}
+
+<hr>
+
+{% if post.is_project %}
+    {% for event in post.project_times.all %}
+    {{ event.date }} {{ event.time }}
+
+    {% if event.open %}
+        This event is open
+    {% else %}
+        This event is not open
+    {% endif %}
+    
+    <br>
+
+    {% empty %}
+        (No dates)
+    {% endfor %}
+{% endif %}
+
+
+{% endblock %}

@@ -1,5 +1,6 @@
 # imports for rendering/constructing views
 from django.shortcuts import render
+from django.views.generic import ListView, DetailView
 
 # imports for authentication
 from django.contrib.auth import login, logout, authenticate
@@ -43,7 +44,14 @@ def newPost(request):
         # validate and save the post
         if post_form.is_valid():
             
-            new_post = post_form.save()
+            new_post = post_form.save(commit=False)
+
+            # find the person who created this post in order to add their organization to it
+            post_author = Profile.objects.get(pk=request.user.pk)
+            new_post.author = post_author
+            if post_author.membership: new_post.organization = post_author.membership
+
+            new_post.save()
 
             # create and save the images if the post is valid overall
             image_form = ImageFormset(request.POST, request.FILES, prefix="image")
@@ -88,6 +96,37 @@ def newPost(request):
             'post_form' : post_form,
             'event_formset' : event_form
         })
+
+# view used for the feed which renders a list of all the posts made to the forum
+class PostListView(ListView):
+
+    # brings up the template because this class has a default template route
+    template_name = "Forum/main_pages/index.html"
+
+    # the model that is to be listed
+    model = Post
+    context_object_name = 'post_list'
+
+    # allowing pagination (putting the objects into multiple pages)
+    # *note: 2 is a placeholder until more data is used to populate the database
+    paginate_by = 2
+
+    # modifying the queryset to display in reverse chronological order
+    def get_queryset(self, *args, **kwargs):
+        queryset = super(PostListView, self).get_queryset(*args, **kwargs)
+        queryset = queryset.order_by("-timestamp")
+        return queryset
+
+ # view used for the feed which renders a the details of a chosen post 
+class PostDetailsView(DetailView):
+
+    model = Post
+
+    # overriding default template path
+    template_name = "Forum/post_pages/view_post.html"
+
+    
+
 
 # sign up, sign in and sign out functions
 def signup(request):

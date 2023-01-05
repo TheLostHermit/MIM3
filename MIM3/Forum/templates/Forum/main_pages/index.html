@@ -8,5 +8,35 @@ Hello
 {% endblock %}
 
 {% block body %}
-<h1> Hello World </h1>
+    <!-- Displaying information from each of the posts in the database -->
+    {% for post in post_list %}
+
+        <!-- iterating through the list of posts to display them -->
+        <div>
+            {{ post.timestamp }}
+            <h2> <a href="{% url 'detail_view' pk=post.pk %}">{{ post.title }}</a> </h2>
+            {{ post.body }}
+
+            <!-- when style is implemented this image will not render inline-->
+            {% for image in post.related_images.all %}
+
+                {% if image.is_icon %}
+                <img src="{{ image.image.url }}" alt="{{ image.image }}">
+
+                    
+                {% endif %}
+
+            {% empty %}
+                <!-- Default graphic for projects and posts -->
+
+            {% endfor %}
+        </div>
+        <hr>
+
+    {% empty %}
+
+        <!-- The display when post_list evaluates to empty -->
+        <p> Apologies, no posts were retrieved </p>
+
+    {% endfor %}
 {% endblock %}
