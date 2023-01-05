@@ -30,7 +30,7 @@ class NewPostForm(ModelForm):
 
 # form to add a variable number of images to a post/project
 ImageFormset = modelformset_factory(
-    PostImage, fields = ('name', 'image', 'is_icon'),
+    PostImage, fields = ('name', 'is_icon', 'image'),
 )
 
 # form to add a variable number of events to a project

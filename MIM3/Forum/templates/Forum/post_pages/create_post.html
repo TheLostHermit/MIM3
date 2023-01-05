@@ -1,0 +1,68 @@
+{% extends "Forum/layouts/sidebar_layout.html" %}
+{% load static %}
+
+{% block title %}
+Create Post
+{% endblock %}
+
+{% block script %}
+    <script src = "{% static 'Forum/script/create_post.js' %}"</script>
+{% endblock %}
+
+{% block body %}
+    <h1> Create a Post </h1>
+    <form action="{% url 'create_post' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {{ post_form.as_p }}
+        
+        <input type="hidden" id="resubmit_project" value="{{ is_project }}">
+        <hr>
+
+        <div id="image-container">
+
+            <b> Image Upload </b>
+
+            {{ image_formset.management_form }}
+
+            <div class="image-form">
+                
+                {% for image_form in image_formset %}
+                    {{ image_form }}                    
+                    <button id="image-{{ forloop.counter0 }}-rm"> Remove this image </button>
+                {% endfor %}
+
+            </div>
+            <button id="add_new_image_btn"> Add Another Image Field </button>
+
+        </div>
+        
+
+        <hr>
+        {{ event_formset.non_form_errors }}
+        <div id="event-container">
+
+            <b> Add Project events </b>
+
+            {{ event_formset.management_form }}           
+
+            <div class="event-form">
+
+                {% for event_form in event_formset %}
+                    {{ event_form }}                    
+                    <button id="event-{{ forloop.counter0 }}-rm"> Remove this event </button>
+                {% endfor %}
+            </div>
+            <button id="add_new_event_btn"> Add Another event </button>
+
+        </div>       
+        <input type="submit">
+    </form>
+
+    <br>
+
+    {% if message %}
+        {{ message }}
+    {% endif %}
+
+{% endblock %}
