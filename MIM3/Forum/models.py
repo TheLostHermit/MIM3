@@ -38,7 +38,7 @@ class Post(models.Model):
     title = models.CharField(max_length=150)
     body = models.TextField(null=False, blank=False)
     timestamp = models.DateTimeField(default = timezone.now, blank=True, null=True)
-    is_project = models.BooleanField(default=False, null=False, blank=False)
+    is_project = models.BooleanField(default=False, null=False, blank=False, verbose_name="Make this a project")
 
     # organization will be pulled from the author of the post naturally
     author = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, related_name='written_posts')
@@ -65,7 +65,7 @@ class PostImage(models.Model):
     #
     image = models.ImageField(upload_to='post_images', default='default.png')
     name = models.CharField(max_length=100, default="image")
-    is_icon = models.BooleanField(default=False, null=False, blank=False)
+    is_icon = models.BooleanField(default=False, null=False, blank=False, verbose_name="Make icon of post/project")
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='related_images')
 
     def __str__(self):
