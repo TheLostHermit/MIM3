@@ -6,10 +6,17 @@
 {% endblock %}
 
 {% block script %}
-    {% endblock %}
+<script src = "{% static 'Forum/script/org_details.js' %}"</script>
+{% endblock %}
 
 {% block body %}
     <h1>{{ organization.name }}</h1>
+
+    <!-- if the organization has an official email you can copy it here -->
+    {% if organization.official_email %}
+        <input type="button" value="Copy Email" id="copy-email-btn">
+        <input type="hidden" value="{{ organization.official_email }}" id="organization-email">
+    {% endif %}
 
     {% if organization.logo %}
         <img src="{{ organization.logo.url }}" alt="{{ org.name }}'s Logo">

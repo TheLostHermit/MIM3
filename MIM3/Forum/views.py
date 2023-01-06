@@ -138,6 +138,7 @@ class PinnedOrgsView(ListView):
         return queryset.filter(followers=self.request.user.pk)
         
 # detail views for organizations and people
+# view used for displaying a profile's information
 class ProfileDetailView(DetailView):
 
     model = Profile
@@ -146,6 +147,7 @@ class ProfileDetailView(DetailView):
     template_name = "Forum/detail_pages/profile_details.html"
 
 # detail views for organizations and people
+# view used for displaying an organization's information
 class OrgDetailView(DetailView):
 
     model = Organization

@@ -12,6 +12,7 @@ class Organization(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
     about = models.TextField(null=False, blank=False)
     logo = models.ImageField(null=True, blank=True, upload_to='organization_logos')
+    official_email = models.EmailField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.name}"
