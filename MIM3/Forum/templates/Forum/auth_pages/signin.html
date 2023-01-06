@@ -9,7 +9,7 @@ Sign In
 
 {% block body %}
     <h1> Sign into an account </h1>
-    <form action="{% url 'sign_in' %}" method="post">
+    <form action="{% url 'login' %}" method="post">
         {% csrf_token %}
         <input type="text", name="username", placeholder="Type your username...">
         <b>OR</b>

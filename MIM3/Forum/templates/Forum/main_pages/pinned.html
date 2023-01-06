@@ -1,0 +1,26 @@
+{% extends "Forum/layouts/sidebar_layout.html" %}
+
+{% block title %}
+Hello
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+
+{% block body %}
+    <!-- Displaying information from each of the orgs the user has pinned -->
+    {%  for org in organization_list %}
+
+        <h1> {{ org.name}} </h1>
+        
+        {% if org.logo %}
+            <img src="{{ org.logo.url }}" alt="{{ org.name }}'s Logo">
+        {% endif %}
+
+        <hr>
+
+    {% empty %}
+        Looks like you haven't pinned any organizations yet
+    {% endfor %}
+    
+{% endblock %}

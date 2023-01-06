@@ -30,6 +30,23 @@ Hello
                 <!-- Default graphic for projects and posts -->
 
             {% endfor %}
+
+            <br>
+
+            <!-- showing the open dates for the project if there are any -->
+            {% if post.is_project %}
+
+                {% for event in post.project_times.all %}
+
+                    {% if event.open %}
+                        {{ event.date }}
+                        {{ event.time }}
+                        <br>
+
+                    {% endif %}
+                {% endfor %}
+
+            {% endif %}
         </div>
         <hr>
 

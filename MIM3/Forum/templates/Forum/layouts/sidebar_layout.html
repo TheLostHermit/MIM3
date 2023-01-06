@@ -39,7 +39,7 @@
                 <a href="{% url 'sign_out' %}">Sign out</a> <br>
             {% else %}
             
-            <a href="{% url 'sign_in' %}">Sign in</a> ||
+            <a href="{% url 'login' %}">Sign in</a> ||
             <a href="{% url 'sign_up' %}">Sign up</a> ||
             {% endif %}
         </div>
@@ -48,6 +48,20 @@
 
         <div class = "row">
             <div id ="sidebar" class = "col-3">
+
+                <!-- links that only appear to logged in users-->
+                {% if user.is_authenticated %}
+
+                    <a href="{% url 'pinned_view' %}">Pinned Organizations</a> <br>
+
+                    <!-- links that appear to members of an organization -->
+                    {% if perms.Forum.can_post %}
+
+                        <a href="{% url 'create_post' %}">Create a post</a> <br>
+
+                    {% endif %}
+
+                {% endif %}
                 <a href="{% url 'index' %}">Link 1</a> <br>
                 <a href="{% url 'index' %}">Link 2</a> <br>
                 <a href="{% url 'index' %}">Link 3</a> <br>
@@ -56,36 +70,28 @@
             <div id = "body" class = "col">
                 {% block body %}
                 {% endblock %}
-            </div>
 
-        </div>
+                <!-- Pagination code from django documentation -->
+                <div class="pagination">
+                    <span class="step-links">
+                        {% if page_obj.has_previous %}
+                            <a href="?page=1">&laquo; first</a>
+                            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                        {% endif %}
 
-        <!-- Pagination code from django documentation -->
-        <div class="pagination">
-            <span class="step-links">
-                {% if page_obj.has_previous %}
-                    <a href="?page=1">&laquo; first</a>
-                    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
-                {% endif %}
+                        {% if page_obj %}
+                        <span class="current">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                        </span>
+                        {% endif %}
 
-                {% if page_obj %}
-                <span class="current">
-                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-                </span>
-                {% endif %}
-
-                {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}">next</a>
-                    <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
-                {% endif %}
-            </span>
-        </div>
-
+                        {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}">next</a>
+                            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>         
+        </div>       
     </body>
-        
-
-    
-
-
-
 </html>

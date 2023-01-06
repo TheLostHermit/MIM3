@@ -125,7 +125,18 @@ class PostDetailsView(DetailView):
     # overriding default template path
     template_name = "Forum/post_pages/view_post.html"
 
-    
+class PinnedOrgsView(ListView):
+
+    model = Organization
+
+    # overriding default template path
+    template_name = "Forum/main_pages/pinned.html"
+
+    def get_queryset(self, *args, **kwargs):
+
+        queryset = super(PinnedOrgsView, self).get_queryset(*args, **kwargs)
+        return queryset.filter(followers=self.request.user.pk)
+        
 
 
 # sign up, sign in and sign out functions
