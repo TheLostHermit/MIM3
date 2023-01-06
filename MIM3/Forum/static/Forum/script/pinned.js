@@ -1,9 +1,3 @@
-document.addEventListener('DOMContentLoaded', function() {
-
-    // removes an organization from a person's "pinned"
-    // document.getElementById('copy-email-btn').onclick = function () {}
-})
-
 function unpin(organization_id) {
 
     // gets the CSRF token to validate the request
@@ -19,12 +13,13 @@ function unpin(organization_id) {
 
 function fetch_and_unpin(organization_id, csrftoken) {
 
-    fetch("pinned/unpin", {
+    fetch(`${window.location.origin}/Forum/pinned/change_pin`, {
         method: "PUT",
         headers: {"X-CSRFToken":csrftoken },
 
         body: JSON.stringify({
-            'org_pk':organization_id
+            'org_pk':organization_id,
+            'action': 'unpin'
         })
     })
 }

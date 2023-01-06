@@ -25,5 +25,5 @@ urlpatterns = [
     path("organization/<int:pk>", views.OrgDetailView.as_view(), name="organization_view"),
 
     # paths for pinning and unpinning organizations
-    path("pinned/unpin", views.UnpinOrgView, name="unpinning_view"),
+    path("pinned/change_pin", views.ChangePinOrgView, name="change_pin"),
 ]

@@ -12,6 +12,17 @@
 {% block body %}
     <h1>{{ organization.name }}</h1>
 
+    {% csrf_token %}
+    <input type="hidden" id="organization-id" value="{{ organization.pk }}">
+    <button type="button" id="toggle-pin-btn" value="{{ pinned }}">
+        {% if pinned %}
+            Unpin
+        {% else%}
+            Pin
+        {% endif %}
+
+    </button>
+
     <a href="{% url 'posts_by_org' org_pk=organization.pk %}">View posts by this organization</a>
 
     <!-- if the organization has an official email you can copy it here -->

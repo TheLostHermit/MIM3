@@ -180,35 +180,64 @@ class OrgDetailView(DetailView):
     # overriding default template path
     template_name = "Forum/detail_pages/org_details.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        is_pinned = self.object.followers.filter(pk=self.request.user.pk)
+        context['pinned'] = is_pinned.exists()
+
+        return context
+
 # view which is called when the user unpins and organization
-def UnpinOrgView(request):
+def ChangePinOrgView(request):
 
     if request.method == "PUT":
 
         data = json.loads(request.body)
 
-        if data.get('org_pk') is not None:
+        if data.get('org_pk') is not None and data.get('action') is not None:
 
-            unpin_org_pk = data['org_pk']
+            target_org_pk = data['org_pk']
+            unpinning = data['action'] == 'unpin' and True or False
             profile = Profile.objects.get(pk=request.user.pk)
 
-            # see if the user's profile has the organization that needs to be unpinned
-            for organization in profile.pinned.all():
+            if unpinning:
 
-                print(f"comparing {organization.pk} to {unpin_org_pk}")
+                # see if the user's profile has the organization that needs to be unpinned
+                for organization in profile.pinned.all():
 
-                if int(organization.pk) == int(unpin_org_pk):
+                    if int(organization.pk) == int(target_org_pk):
 
-                    profile.pinned.remove(organization)
+                        profile.pinned.remove(organization)
+                        profile.save()
+                        return HttpResponse(status=204)
+
+                # if the entire for loop has gone and no organization has been found return an error
+                return JsonResponse({
+                    "error":"organization did not match any the user has pinned"
+                }, status=400)
+
+            else:
+
+                # get the organization corresponding to the pk and add them to the profile's pinned
+                new_organization = Organization.objects.filter(pk=target_org_pk)
+
+                if new_organization.exists(): 
+
+                    # exists method requires a query set so an index is used for the matching organization
+                    profile.pinned.add(new_organization[0])
                     profile.save()
                     return HttpResponse(status=204)
 
-            # if the entire for loop has gone and no organization has been found return an error
-            return JsonResponse({
-                "error":"organization did not match any the user has pinned"
-            }, status=400)
+                else:
 
-    # if the user was trying to access the URL redirect them
+                    return JsonResponse({
+                    "error":"organization did not match any in the database"
+
+                }, status=400)
+
+
+    # if the user was trying to access the URL for some other reason redirect them
     elif request.method == "GET":
         return HttpResponseRedirect(reverse("index"))
 
