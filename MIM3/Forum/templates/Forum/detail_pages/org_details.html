@@ -1,0 +1,42 @@
+{% extends "Forum/layouts/sidebar_layout.html" %}
+{% load static %}
+
+{% block title %}
+{{ organization.name }}
+{% endblock %}
+
+{% block script %}
+    {% endblock %}
+
+{% block body %}
+    <h1>{{ organization.name }}</h1>
+
+    {% if organization.logo %}
+        <img src="{{ organization.logo.url }}" alt="{{ org.name }}'s Logo">
+    {% endif %}
+
+    <hr>
+
+    <p>{{ organization.about }}</p>
+
+    <hr>
+
+    <h2>Members: </h1>
+
+    <ul>
+        {% for member in organization.members.all %}
+
+        <li>{{ member.first_name }} {{ member.last_name }}</li>
+
+        {% empty %}
+
+            <p> There are no members of this organization </p>
+
+        {% endfor %}
+        
+    </ul>
+
+    
+    
+
+{% endblock %}

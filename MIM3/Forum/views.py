@@ -137,7 +137,21 @@ class PinnedOrgsView(ListView):
         queryset = super(PinnedOrgsView, self).get_queryset(*args, **kwargs)
         return queryset.filter(followers=self.request.user.pk)
         
+# detail views for organizations and people
+class ProfileDetailView(DetailView):
 
+    model = Profile
+
+    # overriding default template path
+    template_name = "Forum/detail_pages/profile_details.html"
+
+# detail views for organizations and people
+class OrgDetailView(DetailView):
+
+    model = Organization
+
+    # overriding default template path
+    template_name = "Forum/detail_pages/org_details.html"
 
 # sign up, sign in and sign out functions
 def signup(request):

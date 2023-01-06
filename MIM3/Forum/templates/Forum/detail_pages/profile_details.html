@@ -1,0 +1,44 @@
+{% extends "Forum/layouts/sidebar_layout.html" %}
+{% load static %}
+
+{% block title %}
+{{ profile.username }}
+{% endblock %}
+
+{% block script %}
+    <script src = "{% static 'Forum/script/profile_details.js' %}"</script>
+{% endblock %}
+
+{% block body %}
+    <h1>{{ profile.first_name }} {{ profile.last_name }}</h1>
+    Born on {{ profile.birthday }} 
+
+    {% if profile.membership %}
+        Member of <a href="{% url 'organization_view' pk=profile.membership.pk %}">{{ profile.membership.name }}</a>
+
+    {% else %}
+
+        This person is not a member of an organization
+
+    {% endif %}
+
+    <!-- button used to copy email of profile -->
+    <input type="button" value="Copy Email" id="copy-email-btn">
+    <input type="hidden" value="{{ profile.email }}" id="profile-email">
+    <div id="copied-email-div"> Copied Email </div>
+
+    <hr>
+        {{ profile.biography }}
+    <hr>
+
+    <h2>Pinned Organizations: </h2>
+    
+    {% for org in profile.pinned.all %}
+        <a href="{% url 'organization_view' pk=org.pk %}">{{ org.name }}  </a>        
+    <br>
+
+    {% empty %}
+        (This user has no pinned organizations)
+    {% endfor %}
+
+{% endblock %}

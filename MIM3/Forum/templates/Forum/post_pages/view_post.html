@@ -10,7 +10,7 @@
 
 {% block body %}
 <h1>{{ post.title }}</h1>
-Written on {{ post.timestamp }} by {{ post.author }} from {{ post.organization }}
+Written on {{ post.timestamp }} by {{ post.author }} from <a href="{% url 'organization_view' pk=post.organization.pk %}">{{ post.organization }}</a>
 <hr>
 
 {% for image in post.related_images.all %}

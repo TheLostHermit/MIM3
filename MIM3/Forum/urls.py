@@ -20,4 +20,6 @@ urlpatterns = [
 
     # paths for viewing people and organizations
     path("pinned", login_required(views.PinnedOrgsView.as_view()), name="pinned_view"),
+    path("profile/<int:pk>", views.ProfileDetailView.as_view(), name="profile_view"),
+    path("organization/<int:pk>", views.OrgDetailView.as_view(), name="organization_view"),
 ]

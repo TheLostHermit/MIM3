@@ -13,9 +13,8 @@ Hello
 
         <h1> {{ org.name}} </h1>
         
-        {% if org.logo %}
-            <img src="{{ org.logo.url }}" alt="{{ org.name }}'s Logo">
-        {% endif %}
+        <a href="{% url 'organization_view' pk=org.pk %}"><img src="{{ org.logo.url }}" alt="{{ org.name }}'s Logo"></a>
+
 
         <hr>
 
