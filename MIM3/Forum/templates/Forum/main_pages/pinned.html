@@ -1,20 +1,31 @@
 {% extends "Forum/layouts/sidebar_layout.html" %}
+{% load static %}
 
 {% block title %}
-Hello
+Pinned
 {% endblock %}
 
 {% block script %}
+    <script src = "{% static 'Forum/script/pinned.js' %}"</script>
 {% endblock %}
 
 {% block body %}
+
+    <!-- the hidden CSRF Token validates the requests a user makes when they unpin organizations -->
+    {% csrf_token %}
+
     <!-- Displaying information from each of the orgs the user has pinned -->
     {%  for org in organization_list %}
 
-    <a href="{% url 'posts_by_org' org_pk=org.pk %}"><h1> {{ org.name}} </h1></a>        
-        
-        <a href="{% url 'organization_view' pk=org.pk %}"><img src="{{ org.logo.url }}" alt="{{ org.name }}'s Logo"></a>
+        <div id="organization-{{ org.pk }}-div">
 
+            <a href="{% url 'posts_by_org' org_pk=org.pk %}"><h1> {{ org.name}} </h1></a>  
+        
+            <button type="button" id="unpin-org-{{org.pk}}" onclick = unpin("{{ org.pk }}")>Unpin</button>
+            
+            <a href="{% url 'organization_view' pk=org.pk %}"><img src="{{ org.logo.url }}" alt="{{ org.name }}'s Logo"></a>
+
+        </div>
 
         <hr>
 

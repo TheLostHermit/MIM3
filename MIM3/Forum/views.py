@@ -8,8 +8,12 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.db import IntegrityError
 
 # imports for navigating around the site
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
+
+# imports for processing requests from javascript
+from django.http.response import JsonResponse
+import json
 
 # importing models and forms from other files in this folder
 from .forms import * # models are imported through this as well
@@ -176,6 +180,43 @@ class OrgDetailView(DetailView):
     # overriding default template path
     template_name = "Forum/detail_pages/org_details.html"
 
+# view which is called when the user unpins and organization
+def UnpinOrgView(request):
+
+    if request.method == "PUT":
+
+        data = json.loads(request.body)
+
+        if data.get('org_pk') is not None:
+
+            unpin_org_pk = data['org_pk']
+            profile = Profile.objects.get(pk=request.user.pk)
+
+            # see if the user's profile has the organization that needs to be unpinned
+            for organization in profile.pinned.all():
+
+                print(f"comparing {organization.pk} to {unpin_org_pk}")
+
+                if int(organization.pk) == int(unpin_org_pk):
+
+                    profile.pinned.remove(organization)
+                    profile.save()
+                    return HttpResponse(status=204)
+
+            # if the entire for loop has gone and no organization has been found return an error
+            return JsonResponse({
+                "error":"organization did not match any the user has pinned"
+            }, status=400)
+
+    # if the user was trying to access the URL redirect them
+    elif request.method == "GET":
+        return HttpResponseRedirect(reverse("index"))
+
+
+            
+
+
+    
 # sign up, sign in and sign out functions
 def signup(request):
 

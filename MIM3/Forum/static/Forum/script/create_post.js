@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (project) {document.getElementById('event-container').style.display = "block"}
     else {document.getElementById('event-container').style.display = "none"}
 
-    // asigns onclick functions to each of the plus buttons as well as the checkbox for project info
+    // assigns onclick functions to each of the plus buttons as well as the checkbox for project info
     document.getElementById('add_new_image_btn').addEventListener('click', (event) => add_form(event, 'image'));
     document.getElementById('add_new_event_btn').addEventListener('click', (event) => add_form(event, 'event'));
 
