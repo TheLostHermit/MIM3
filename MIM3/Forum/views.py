@@ -14,6 +14,9 @@ from django.urls import reverse
 # importing models and forms from other files in this folder
 from .forms import * # models are imported through this as well
 
+# the number of list items to display before pagination is controlled by this global variable
+PAGINATE_NO = 2
+
 # index page
 def index(request):
     return render(request, "Forum/main_pages/index.html")
@@ -108,8 +111,7 @@ class PostListView(ListView):
     context_object_name = 'post_list'
 
     # allowing pagination (putting the objects into multiple pages)
-    # *note: 2 is a placeholder until more data is used to populate the database
-    paginate_by = 2
+    paginate_by = PAGINATE_NO
 
     # modifying the queryset to display in reverse chronological order
     def get_queryset(self, *args, **kwargs):
@@ -125,6 +127,7 @@ class PostDetailsView(DetailView):
     # overriding default template path
     template_name = "Forum/post_pages/view_post.html"
 
+# view rendering a list of all the organizations the user has pinned
 class PinnedOrgsView(ListView):
 
     model = Organization
@@ -136,7 +139,25 @@ class PinnedOrgsView(ListView):
 
         queryset = super(PinnedOrgsView, self).get_queryset(*args, **kwargs)
         return queryset.filter(followers=self.request.user.pk)
-        
+
+# view rendering the list of posts only made my a specific organization
+class PostsByOrgView(ListView):
+
+    model = Post
+
+    paginate_by = PAGINATE_NO
+
+    # overriding default template path
+    template_name = "Forum/main_pages/index.html"
+
+    def get_queryset(self, *args, **kwargs):
+
+        # gets posts by a particular organization
+        queryset = super(PostsByOrgView, self).get_queryset(*args, **kwargs)
+        queryset = queryset.filter(organization = self.kwargs['org_pk'])
+        return queryset.order_by("-timestamp")   
+
+
 # detail views for organizations and people
 # view used for displaying a profile's information
 class ProfileDetailView(DetailView):

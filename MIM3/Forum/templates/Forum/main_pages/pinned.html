@@ -11,7 +11,7 @@ Hello
     <!-- Displaying information from each of the orgs the user has pinned -->
     {%  for org in organization_list %}
 
-        <h1> {{ org.name}} </h1>
+    <a href="{% url 'posts_by_org' org_pk=org.pk %}"><h1> {{ org.name}} </h1></a>        
         
         <a href="{% url 'organization_view' pk=org.pk %}"><img src="{{ org.logo.url }}" alt="{{ org.name }}'s Logo"></a>
 

@@ -12,6 +12,8 @@
 {% block body %}
     <h1>{{ organization.name }}</h1>
 
+    <a href="{% url 'posts_by_org' org_pk=organization.pk %}">View posts by this organization</a>
+
     <!-- if the organization has an official email you can copy it here -->
     {% if organization.official_email %}
         <input type="button" value="Copy Email" id="copy-email-btn">

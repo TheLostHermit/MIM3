@@ -17,6 +17,7 @@ urlpatterns = [
     # paths for dealing with creating/viewing posts
     path("newpost", views.newPost, name="create_post"),
     path("details/<int:pk>", views.PostDetailsView.as_view(), name="detail_view"),
+    path("postsby/<int:org_pk>", views.PostsByOrgView.as_view(), name="posts_by_org"),
 
     # paths for viewing people and organizations
     path("pinned", login_required(views.PinnedOrgsView.as_view()), name="pinned_view"),
