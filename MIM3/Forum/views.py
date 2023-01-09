@@ -121,6 +121,19 @@ class PostListView(ListView):
     def get_queryset(self, *args, **kwargs):
         queryset = super(PostListView, self).get_queryset(*args, **kwargs)
         queryset = queryset.order_by("-timestamp")
+
+        # looks through all the dates and updates their status
+        for post_entry in queryset:
+
+            if post_entry.is_project:
+                project_events = Event.objects.filter(post = post_entry)
+                
+                for event in project_events:
+
+                    if event.date < timezone.now().date():
+                        event.open = False
+                        event.save()
+
         return queryset
 
  # view used for the feed which renders a the details of a chosen post 
