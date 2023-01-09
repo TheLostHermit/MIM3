@@ -140,9 +140,26 @@ class PostListView(ListView):
 class PostDetailsView(DetailView):
 
     model = Post
+    context_object_name = 'post'
 
     # overriding default template path
     template_name = "Forum/post_pages/view_post.html"
+
+    # checking the volunteer objects to see if the user has volunteered for this project
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        post = Post.objects.get(pk=self.kwargs.get('pk'))
+
+        if post.is_project:
+
+            # this query returns all events for this post that the user has volunteered for.
+            # the returned queryset is checked against when it is checked whether a user has already
+            # volunteered for a time slot
+            post_events = Event.objects.filter(post=post, bids__bidder__pk=self.request.user.pk)               
+            context['post_events'] = post_events
+
+        return context
+
 
 # view rendering a list of all the organizations the user has pinned
 class PinnedOrgsView(ListView):
@@ -254,6 +271,47 @@ def ChangePinOrgView(request):
     elif request.method == "GET":
         return HttpResponseRedirect(reverse("index"))
 
+# view that updates a volunteer bid when the user submits the form at the bottom of the project
+@login_required(login_url= 'sign_in')
+def ProjectBidView(request):
+
+    if request.method == "POST":
+        
+        # look at the data the form submitted and get the corresponding objects
+        target_event_id = request.POST["target-event"]
+        event_status = request.POST["event-status"]
+
+        if target_event_id is not None and event_status is not None:
+
+            current_profile = Profile.objects.get(pk=request.user.pk)
+            target_event = Event.objects.get(pk=target_event_id)
+
+            matching_bids = Bid.objects.filter(event=target_event, bidder=current_profile)
+
+            if event_status == 'volunteered':
+
+                # if the person is volunteering see if they have already volunteered on the server side               
+                if not matching_bids.exists():
+
+                    print("no matching bid exists")
+
+                    # if the person is a new volunteer create the bid
+                    new_bid = Bid.objects.create(event=target_event, bidder=current_profile)
+                    new_bid.save()
+
+            elif event_status == "not_volunteered":
+
+                # if the person is unvolunteering see if they never volunteered in the first place
+                if matching_bids.exists():          
+            
+                    # if the person is unvolunteering then find their bid instance and delete it
+                    matching_bids[0].delete()
+    
+        # (this should eventually redirect to the volunteer dashboard )
+        return (HttpResponseRedirect(reverse('index')))
+
+    # if some sort of other request was made to the url redirect to the home page
+    return (HttpResponseRedirect(reverse('index')))
 
             
 

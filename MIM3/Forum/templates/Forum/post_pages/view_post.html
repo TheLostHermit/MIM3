@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block script %}
+    <script src = "{% static 'Forum/script/view_post.js' %}"</script>
 {% endblock %}
 
 {% block body %}
@@ -25,21 +26,56 @@ Written on {{ post.timestamp }} by {{ post.author }} from <a href="{% url 'organ
 
 <hr>
 
+<!-- see if the user is logged in to prevent form inputs -->
+<input type="hidden" id="user-logged-in" value="{{user.is_authenticated}}">
+
 {% if post.is_project %}
-    {% for event in post.project_times.all %}
-    {{ event.date }} {{ event.time }}
 
-    {% if event.open %}
-        This event is available
-    {% else %}
-        This event is not available
-    {% endif %}
-    
-    <br>
+    <div>
 
-    {% empty %}
-        (No dates)
-    {% endfor %}
+    <form action="{% url 'change_bids' %}" method="post" name="volunteer_form">
+
+        {% csrf_token %}
+
+        {% for event in post.project_times.all %}
+
+            <label for="event-{{event.pk}}-btn">{{ event.date }} {{ event.time }}</label>
+        
+            {% if event.open %}
+
+                <input type="hidden" name="target-event" id="event-{{event.pk}}-id" value="{{ event.pk }}">
+        
+                {% if event in post_events %}
+
+                    <input type="hidden" name="event-status" id="event-{{event.pk}}-status" value="volunteered">
+                    <button type="button" id="event-{{event.pk}}-btn" onclick="toggle_volunteer({{event.pk}})">You volunteered for this event. Click to leave.</button>                    
+        
+                {% else %}
+
+                    <input type="hidden" name="event-status" id="event-{{event.pk}}-status" value="not_volunteered">
+                    <button type="button" id="event-{{event.pk}}-btn" onclick="toggle_volunteer({{event.pk}})">Volunteer for this event.</button>  
+
+                {% endif %} 
+        
+            {% else %}
+                This event is closed
+            {% endif %}  
+            <br>
+        
+        {% empty %}
+            (No dates)
+        {% endfor %}
+
+        {% if post.project_times.all %}
+            <button type="submit">Confirm Choices</button>
+        {% endif %}
+
+    </form>
+
+</div>
+
+
+
 {% endif %}
 
 

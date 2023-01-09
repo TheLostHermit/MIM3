@@ -26,4 +26,7 @@ urlpatterns = [
 
     # paths for pinning and unpinning organizations
     path("pinned/change_pin", views.ChangePinOrgView, name="change_pin"),
+
+    # path for volunteering and managing volunteers for projects
+    path("change_bids", views.ProjectBidView, name="change_bids"),
 ]
