@@ -22,6 +22,9 @@ urlpatterns = [
     path("manage_posts", permission_required("Forum.can_post")(views.ManagePostsView.as_view()), name="manage_posts_view"),
     path("delete_post/<int:pk>", permission_required("Forum.can_post")(views.DeletePostView.as_view()), name="delete_post"),
     path("change_post/<int:pk>", permission_required("Forum.can_post")(views.ChangePostView.as_view()), name="change_post"),
+    #* the nameing of these paths are confusing and should be switched
+    path("manage_imgs/<int:post_pk>", permission_required("Forum.can_post")(views.ManagePostImgsView.as_view()), name="manage_imgs"),
+    path("change_imgs/<int:post_pk>", views.ChangeImgView, name="change_imgs"),
 
     # paths for viewing people and organizations
     path("pinned", login_required(views.PinnedOrgsView.as_view()), name="pinned_view"),

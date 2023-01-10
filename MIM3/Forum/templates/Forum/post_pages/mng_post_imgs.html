@@ -1,0 +1,71 @@
+{% extends "Forum/layouts/sidebar_layout.html" %}
+{% load static %}
+
+{% block title %}
+{{ post.title }}
+{% endblock %}
+
+{% block script %}
+    <script src = "{% static 'Forum/script/mng_post_imgs.js' %}"</script>
+{% endblock %}
+
+{% block body %}
+
+
+    <!-- A form to create a new image -->
+
+    <div>
+        <form action="{% url 'change_imgs' post_pk=post_pk %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ image_form }}
+
+            <input type="submit" value="add image">
+
+        </form>
+    </div>
+
+    <br>
+
+
+    <!-- a list view for all the images currently associated with the project-->
+
+    <div>
+
+        <!--Maintaining the post ID as an input for the PUT request (technically uneccessary
+            but maintaining the overall view structure makes most sense) -->
+        
+            <input type="hidden" id="post-id-input" value={{ post_pk }}>
+        
+        {% for image in postimage_list %}
+
+        <div id="img-{{image.id}}-div">
+
+            <!-- (needs to be styled) -->
+            <img src="{{ image.image.url }}" alt="{{ image.image }}">
+
+            {{ image.name }}
+
+            {% if image.is_icon %}
+
+                <button type="button" id="toggle-img-{{image.pk}}-isicon" onclick="toggle_icon({{ image.pk }})" value="true">This image is an icon. Click to remove icon status</button>
+
+            {% else %}
+
+                <button type="button" id="toggle-img-{{image.pk}}-isicon" onclick="toggle_icon({{ image.pk }})" value="false">Make this image an icon</button>
+
+            {% endif %}
+            <button type="button" id="delete-img-{{image.pk}}-btn" onclick="delete_image({{image.pk}})">Delete Image</button>
+
+        </div>
+
+        <hr>
+
+        {% empty %}
+            This post currently has no images
+
+        {% endfor %}
+
+    </div>
+
+
+{% endblock %}

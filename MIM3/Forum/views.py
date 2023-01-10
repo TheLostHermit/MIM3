@@ -258,7 +258,29 @@ class ChangePostView(UpdateView):
     def get_success_url(self):
         return reverse('detail_view', kwargs={'pk':self.object.id})
 
+# view that renders a list of images in the post so that they can be deleted
+class ManagePostImgsView(ListView):
 
+    model = PostImage
+
+    # overriding default template path
+    template_name = "Forum/post_pages/mng_post_imgs.html"
+
+    def get_queryset(self, *args, **kwargs):
+
+        queryset = super(ManagePostImgsView, self).get_queryset(*args, **kwargs)
+
+        # return the queryset filtered by the current post        
+        current_post = Post.objects.get(pk=self.kwargs['post_pk'])
+        return queryset.filter(post=current_post)
+
+    # adding a form to create new images to this context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['image_form'] = ImageForm()
+        context['post_pk'] = self.kwargs['post_pk']
+
+        return context
 
 # detail views for organizations and people
 # view used for displaying a profile's information
@@ -380,11 +402,68 @@ def ProjectBidView(request):
 
     # if some sort of other request was made to the url redirect to the home page
     return (HttpResponseRedirect(reverse('index')))
+   
 
+# view that updates images when a user adds or deletes images from a post
+@permission_required('Forum.can_post', login_url= 'index')
+def ChangeImgView(request, post_pk):
+
+    current_posts = Post.objects.filter(pk=post_pk)
+
+    if current_posts.exists():
+
+        current_post = current_posts[0]
+
+        # when a user deletes an image they use a put request
+        if request.method == "PUT":
+
+            data = json.loads(request.body)
+
+            if data.get('img_pk') is not None:
+
+                target_img_pk = data['img_pk']
+                target_img_filter = PostImage.objects.filter(pk=target_img_pk)
+
+                # the exist method can only be used on a filter so once its existence is confirmed the 
+                # target is the first element of this query
+                if target_img_filter.exists():
+
+                    target_img = target_img_filter[0]
+
+                    # if the image is being deleted
+                    if data.get('delete') is not None:
+
+                        target_img[0].delete()
+                        return HttpResponse(status=204)
+
+                    # if the image's icon status is being changed
+                    if data.get('icon_status') is not None:
+
+                        target_img.is_icon = data['icon_status'] == "true" and True or False
+                        target_img.save()
+                        return HttpResponse(status=204)
+
+            return JsonResponse({
+                "error":"Image data was not valid"
+            }, status=400)
+
+        # when a user creates an image they use a post request
+        elif request.method == "POST":
+
+            new_image_form = ImageForm(request.POST, request.FILES)
             
+            if new_image_form.is_valid() and ('image' in new_image_form.changed_data):
+
+                image = new_image_form.save(commit=False)
+                image.post = current_post
+                image.save()
+
+            # takes you back to the editing view
+            return HttpResponseRedirect(reverse('change_imgs', kwargs={'pk':current_post.pk}))
 
 
-    
+    return HttpResponseRedirect(reverse('index'))
+
 # sign up, sign in and sign out functions
 def signup(request):
 

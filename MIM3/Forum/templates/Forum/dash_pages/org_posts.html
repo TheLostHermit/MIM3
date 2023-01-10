@@ -20,6 +20,7 @@ Post Dashboard
 
         <a class="btn btn-primary" href="{% url 'delete_post' pk=post.pk %}"> Delete </a>
         <a class="btn btn-primary" href="{% url 'change_post' pk=post.pk %}"> Edit title or body </a>
+        <a class="btn btn-primary" href="{% url 'manage_imgs' post_pk=post.pk %}"> Manage Related Images </a>
 
 
         <hr>
