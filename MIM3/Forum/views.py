@@ -62,16 +62,12 @@ def newPost(request):
 
             if image_form.is_valid():
 
-                for form in image_form:
+                for form in image_form:                  
 
-                    image = form.save(commit=False)
+                    if ('image' in form.changed_data):
 
-                    default_image = PostImage._meta.get_field('image').get_default()
-
-                    if (image.image != default_image):
+                        image = form.save(commit=False)
                         image.post = new_post
-
-                        print("this is not the default image")
                         image.save()
             
             # create and save events for the project if it is a project

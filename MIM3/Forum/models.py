@@ -64,7 +64,7 @@ class Event(models.Model):
 class PostImage(models.Model):
 
     #
-    image = models.ImageField(upload_to='post_images', default='default.png')
+    image = models.ImageField(upload_to='post_images', default='default.png', blank=False)
     name = models.CharField(max_length=100, default="image")
     is_icon = models.BooleanField(default=False, null=False, blank=False, verbose_name="Make icon of post/project")
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='related_images')
