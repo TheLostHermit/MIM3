@@ -1,6 +1,7 @@
 # imports for rendering/constructing views
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
+from django.views.generic.edit import DeleteView
 
 # imports for authentication
 from django.contrib.auth import login, logout, authenticate
@@ -20,10 +21,6 @@ from .forms import * # models are imported through this as well
 
 # the number of list items to display before pagination is controlled by this global variable
 PAGINATE_NO = 2
-
-# index page
-def index(request):
-    return render(request, "Forum/main_pages/index.html")
 
 # in the case of permission required the user is actually redirected to the index
 # (Consider adding "access denied" message of some sort to this route instead)
@@ -130,7 +127,16 @@ class PostListView(ListView):
                 
                 for event in project_events:
 
+                    # if an event has passed close it and mark all bids as passed
                     if event.date < timezone.now().date():
+
+                        event_bids = event.bids.all()
+
+                        for bid in event_bids:
+
+                            bid.status = "CP"
+                            bid.save()
+
                         event.open = False
                         event.save()
 
@@ -190,6 +196,28 @@ class PostsByOrgView(ListView):
         queryset = super(PostsByOrgView, self).get_queryset(*args, **kwargs)
         queryset = queryset.filter(organization = self.kwargs['org_pk'])
         return queryset.order_by("-timestamp")   
+
+# view for seeing all the projects you volunteered for
+class YourBidListView(ListView):
+
+    model = Bid
+    # overriding default template path
+    template_name = "Forum/dash_pages/user_bids.html"
+
+    def get_queryset(self, *args, **kwargs):
+
+        queryset = super(YourBidListView, self).get_queryset(*args, **kwargs)
+        return queryset.filter(bidder=self.request.user.pk).order_by("event__date")
+
+class DeleteYourBidView(DeleteView):
+
+    model = Bid
+
+    # overriding default template path
+    template_name = "Forum/util_pages/delete_bid.html"
+
+    def get_success_url(self):
+        return reverse('your_project_view')
 
 
 # detail views for organizations and people
@@ -307,8 +335,8 @@ def ProjectBidView(request):
                     # if the person is unvolunteering then find their bid instance and delete it
                     matching_bids[0].delete()
     
-        # (this should eventually redirect to the volunteer dashboard )
-        return (HttpResponseRedirect(reverse('index')))
+        # redirect to the dashboard that deals with all your volunteers
+        return (HttpResponseRedirect(reverse('your_project_view')))
 
     # if some sort of other request was made to the url redirect to the home page
     return (HttpResponseRedirect(reverse('index')))

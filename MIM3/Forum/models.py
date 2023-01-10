@@ -91,7 +91,7 @@ class Bid(models.Model):
         ('PE', 'Pending'),
         ('AC', 'Accepted'),
         ('DN', 'Denied'),
-        ('CP', 'Complete')
+        ('CP', 'Passed')
     ]
 
     bidder = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='bids')

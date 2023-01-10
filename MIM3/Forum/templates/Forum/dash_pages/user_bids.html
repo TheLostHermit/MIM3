@@ -1,0 +1,33 @@
+{% extends "Forum/layouts/sidebar_layout.html" %}
+
+{% block title %}
+Your Volunteered Projects
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+
+{% block body %}
+
+    <!-- Displaying each bid from the bid_list -->
+
+    {% for bid in bid_list %}
+
+        <h1> {{ bid.event.post.title }} </h1>
+
+        <!-- *Get status display is used to get the human readable name from the status choice field -->
+        <b>Status:</b> {{ bid.get_status_display }} <br>
+        {{ bid.event.date }} at {{ bid.event.time }} from {{ bid.event.post.organization }}
+
+        <!-- button to delete this item (sends user to a confirmation page )-->
+        <a class="btn btn-primary" href="{% url 'delete_bid' pk=bid.pk %}"> X </a>
+
+        <hr>
+
+    <!-- If it's empty the user hasn't volunteered for anything yet -->
+    {% empty %}
+
+        <p> Looks like you haven't volunteered for any projects </p>
+
+    {% endfor %}
+{% endblock %}

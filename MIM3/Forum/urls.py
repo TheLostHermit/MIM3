@@ -29,4 +29,6 @@ urlpatterns = [
 
     # path for volunteering and managing volunteers for projects
     path("change_bids", views.ProjectBidView, name="change_bids"),
+    path("your_projects", login_required(views.YourBidListView.as_view()), name="your_project_view"),
+    path("delete_bid/<int:pk>", login_required(views.DeleteYourBidView.as_view()), name="delete_bid"),
 ]
