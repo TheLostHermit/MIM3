@@ -60,6 +60,7 @@
                     {% if perms.Forum.can_post %}
 
                         <a href="{% url 'create_post' %}">Create a post</a> <br>
+                        <a href="{% url 'manage_posts_view' %}">Organization Dashboard</a> <br>
 
                     {% endif %}
 

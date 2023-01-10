@@ -1,0 +1,33 @@
+{% extends "Forum/layouts/sidebar_layout.html" %}
+
+{% block title %}
+Post Dashboard
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+
+{% block body %}
+
+    
+
+    <!-- Displaying each post from the post_list -->
+
+    {% for post in post_list %}
+
+        <h1> {{ post.title }} </h1>
+        Org Name: {{ post.organization.name }}
+
+        <a class="btn btn-primary" href="{% url 'delete_post' pk=post.pk %}"> Delete </a>
+        <a class="btn btn-primary" href="{% url 'change_post' pk=post.pk %}"> Edit title or body </a>
+
+
+        <hr>
+
+    <!-- If it's empty the user hasn't volunteered for anything yet -->
+    {% empty %}
+
+        <p> Looks like {{ post.organization.name }} has no posts. </p>
+
+    {% endfor %}
+{% endblock %}

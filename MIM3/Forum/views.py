@@ -1,7 +1,7 @@
 # imports for rendering/constructing views
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
-from django.views.generic.edit import DeleteView
+from django.views.generic.edit import DeleteView, UpdateView
 
 # imports for authentication
 from django.contrib.auth import login, logout, authenticate
@@ -209,6 +209,7 @@ class YourBidListView(ListView):
         queryset = super(YourBidListView, self).get_queryset(*args, **kwargs)
         return queryset.filter(bidder=self.request.user.pk).order_by("event__date")
 
+# deletes bid from the bid list 
 class DeleteYourBidView(DeleteView):
 
     model = Bid
@@ -218,6 +219,49 @@ class DeleteYourBidView(DeleteView):
 
     def get_success_url(self):
         return reverse('your_project_view')
+
+# dashboard view gets all the projects/posts of an organization
+class ManagePostsView(ListView):
+
+    model = Post
+
+    # overriding the default template path
+    template_name = "Forum/dash_pages/org_posts.html"
+
+    def get_queryset(self, *args, **kwargs):
+
+        queryset = super(ManagePostsView, self).get_queryset(*args, **kwargs)
+
+        # return the queryset filtered by the user's organization all in reverse chronological order
+        
+        current_profile = Profile.objects.get(pk=self.request.user.pk)
+        return queryset.filter(organization=current_profile.membership).order_by("-timestamp")
+
+
+# view deletes a selected post object and redirects to the organization dashboard
+class DeletePostView(DeleteView):
+
+    model = Post
+
+    # overriding the default template path
+    template_name = "Forum/util_pages/delete_post.html"
+
+    def get_success_url(self):
+        return reverse('manage_posts_view')
+
+# view changes the title or body of a selected post
+class ChangePostView(UpdateView):
+
+    model = Post
+    fields = ['title', 'body']
+
+    # overriding the default template path
+    template_name = "Forum/post_pages/change_post.html"
+
+    # when done redirect to the post which was changed
+    def get_success_url(self):
+        return reverse('detail_view', kwargs={'pk':self.object.id})
+
 
 
 # detail views for organizations and people

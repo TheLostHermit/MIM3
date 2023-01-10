@@ -1,0 +1,32 @@
+{% extends "Forum/layouts/sidebar_layout.html" %}
+{% load static %}
+
+{% block title %}
+Confirm Delete
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+
+{% block body %}
+
+    <!-- Uses Django's delete view class to delete the bid for this person-->
+    <form method="post">
+        {% csrf_token %}
+        {{ form }}
+
+        <p>
+            Are you sure you want to delete {{ object.title }}?
+            Deleting it will delete all associated images
+            
+            {% if object.is_project %}
+                , events and volunteer lists
+            {% endif %}
+        </p>
+
+        .This action cannot be undone!
+
+        <input type="submit" value="Yes, I'm sure">
+    </form>
+
+{% endblock %}
