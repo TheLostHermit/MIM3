@@ -56,7 +56,17 @@ class Event(models.Model):
     time = models.TimeField(default=timezone.now, null=True, blank=True)
     open = models.BooleanField(default=True, null=False, blank=False)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='project_times')
-    passed = models.BooleanField(default=False, null=False, blank=False)
+
+    # adds a property to check whether this event has passed and if so change the open status
+    @property
+    def passed(self):
+
+        if (self.date < timezone.now().date()):
+            self.open = False
+            return True
+
+        else:
+            return False
 
     def __str__(self):
         return f"Event from {self.post.title}"
