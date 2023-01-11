@@ -48,6 +48,12 @@
                     
                     <p id="event-{{event.pk}}-time">{{ event.time }}</p>
 
+                    <!-- if the event is open, display the button indicating that it can be closed, else vice versa 
+                        do not display this option if the event has passed -->
+
+                    
+
+
                     <button id="delete-{{event.pk}}-warning-btn" onclick="delete_event_warning({{event.id}})">Delete Event</button>
                     <button id="toggle-change-{{event.pk}}-btn" value="none" onclick="toggle_change({{event.id}})">Change Event Date or Time</button>
 

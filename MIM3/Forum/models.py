@@ -56,6 +56,7 @@ class Event(models.Model):
     time = models.TimeField(default=timezone.now, null=True, blank=True)
     open = models.BooleanField(default=True, null=False, blank=False)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='project_times')
+    passed = models.BooleanField(default=False, null=False, blank=False)
 
     def __str__(self):
         return f"Event from {self.post.title}"
