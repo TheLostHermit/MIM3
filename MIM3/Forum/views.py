@@ -20,10 +20,10 @@ import json
 from .forms import * # models are imported through this as well
 
 # the number of list items to display before pagination is controlled by this global variable
-PAGINATE_NO = 2
+PAGINATE_NO = 5
 
 # in the case of permission required the user is actually redirected to the index
-# (Consider adding "access denied" message of some sort to this route instead)
+# view used to create new posts
 @login_required(login_url= 'sign_in')
 @permission_required('Forum.can_post', login_url= 'index')
 def newPost(request):
@@ -258,7 +258,7 @@ class ChangePostView(UpdateView):
     def get_success_url(self):
         return reverse('detail_view', kwargs={'pk':self.object.id})
 
-# view that renders a list of images in the post so that they can be deleted
+# view that renders a list of images in the post so that they can be deleted/added
 class ManagePostImgsView(ListView):
 
     model = PostImage
@@ -281,6 +281,31 @@ class ManagePostImgsView(ListView):
         context['post_pk'] = self.kwargs['post_pk']
 
         return context
+
+# view that renders  list of events for a project so that they can be added/deleted/changed
+class ManageEventsView(ListView):
+
+    model = Event
+
+    # overriding default template path
+    template_name = "Forum/post_pages/mng_post_imgs.html"
+
+    def get_queryset(self, *args, **kwargs):
+
+        # lists all the events of the post in question
+        queryset = super(ManageEventsView, self).get_queryset(*args, **kwargs)
+        current_post = Post.objects.get(pk=self.kwargs['post_pk'])
+        return queryset.filter(post=current_post)
+
+    # uses the event form for all instances where the event is created or changed
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['event_form'] = ... #EventForm()
+        context['post_pk'] = self.kwargs['post_pk']
+
+
+
+
 
 # detail views for organizations and people
 # view used for displaying a profile's information
