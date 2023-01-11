@@ -51,7 +51,18 @@
                     <!-- if the event is open, display the button indicating that it can be closed, else vice versa 
                         do not display this option if the event has passed -->
 
-                    Passed: {{ event.passed }} Open: {{ event.open }}
+                    {% if not event.passed %}
+
+                        {% if event.open %}
+                            <button type="button" id="toggle-open-event-{{event.pk}}-btn" onclick="toggle_open({{event.pk}})" value="true">This event is open. Click to close</button>
+                        {% else %}
+                            <button type="button" id="toggle-open-event-{{event.pk}}-btn" onclick="toggle_open({{event.pk}})" value="false">This event is closed. Click to open</button>
+                        {% endif %}
+
+                    {% else %}
+                        <p>This event has passed </p>
+
+                    {% endif %}
 
 
                     <button id="delete-{{event.pk}}-warning-btn" onclick="delete_event_warning({{event.id}})">Delete Event</button>

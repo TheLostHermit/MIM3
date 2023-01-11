@@ -551,6 +551,33 @@ def ChangeEventView(request):
                             target_event.delete()
                             return HttpResponse(status=204)
 
+                elif action == "toggle_open":
+
+                    # if the "open" status of the event is being changed (once the new value came through)
+                    if data.get('open') is not None:
+
+                        # if the event is closed close the event
+                        if data['open'] == "false":
+
+                            target_event.open = False
+                            
+
+                        elif data['open'] == "true":
+
+                            target_event.open = True
+
+                        # if the open value is neither of these return an error
+                        else:
+
+                            return JsonResponse({
+                            "error":"the value of 'open' must be either true or false"
+                            }, status=400)
+
+                        # if there was no error save the event and return a successful response    
+                        target_event.save()
+                        return HttpResponse(status=204)
+
+
                 elif action == "change":
 
                     error = False

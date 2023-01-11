@@ -1,24 +1,39 @@
-/*
-    1) onclick of "change_event" btn makes the hidden input 
-    value "valid" and clicking it again makes it invalid (etc.)
 
-    It also hides and shows the event change div
+// function that toggles the button for opening and closing an event
+function toggle_open(event_id) {
 
-    2) clicking the "make changes" button finds the p for date and p
-    for time and changes it to the inputted values, while also hiding the 
-    div/making the new form's input invalid (sort of like clicking the 
-    change event button)
+    OPEN_OPTIONS = {
+        "open": ["true", "This event is open. Click to close"],
+        "closed": ["false", "This event is closed. Click to open"]
+    }
 
-    Make changes button sends a PUT request to the server with the 
-    CSRF token, new date, new time, action ("change") and current event ID
+    const toggle_button = document.getElementById(`toggle-open-event-${event_id}-btn`);
 
+    // getting the CSRFToken for the request
+    const csrftoken = document.querySelector(`#event-${event_id}-change-div [name='csrfmiddlewaretoken']`).value;
 
-*/
+    // changing the value/appearance of the button and sending the PUT request to the server
+
+    // if the event is currently open
+    if (toggle_button.value == OPEN_OPTIONS["open"][0]) {
+
+        new_button_value = "closed";             
+        
+    }
+
+    else {
+        new_button_value = "open";
+    }
+
+    toggle_button.value = OPEN_OPTIONS[new_button_value][0];
+    toggle_button.innerHTML = OPEN_OPTIONS[new_button_value][1];
+    fetch_and_toggle_open(event_id, OPEN_OPTIONS[new_button_value][0], csrftoken);
+}
 
 // function that toggles the visibility and validity of the change form
 function toggle_change(event_id) {
 
-    const CHANGE_VALUES = {
+    const CHANGE_OPTIONS = {
         "false" : ["none", "Change Event Date or Time", "invalid"],
         "true" : ["block", "Discard changes to event", "valid"]
     }
@@ -28,22 +43,22 @@ function toggle_change(event_id) {
     const validation_input = document.getElementById(`event-${event_id}-validity-input`);
 
     // if the div to change values is currently not being displayed
-    if (clicked_button.value === CHANGE_VALUES["false"][0]) {
+    if (clicked_button.value === CHANGE_OPTIONS["false"][0]) {
 
         // display it and change the form validity
-        validation_input.value = CHANGE_VALUES["true"][2];
-        form_div.style.display = CHANGE_VALUES["true"][0];
-        clicked_button.value = CHANGE_VALUES["true"][0];
-        clicked_button.innerHTML = CHANGE_VALUES["true"][1];
+        validation_input.value = CHANGE_OPTIONS["true"][2];
+        form_div.style.display = CHANGE_OPTIONS["true"][0];
+        clicked_button.value = CHANGE_OPTIONS["true"][0];
+        clicked_button.innerHTML = CHANGE_OPTIONS["true"][1];
     }
 
     //else vice versa
-    else if (clicked_button.value === CHANGE_VALUES["true"][0]){
+    else if (clicked_button.value === CHANGE_OPTIONS["true"][0]){
         // display it and change the form validity
-        validation_input.value = CHANGE_VALUES["false"][2];
-        form_div.style.display = CHANGE_VALUES["false"][0];
-        clicked_button.value = CHANGE_VALUES["false"][0];
-        clicked_button.innerHTML = CHANGE_VALUES["false"][1];
+        validation_input.value = CHANGE_OPTIONS["false"][2];
+        form_div.style.display = CHANGE_OPTIONS["false"][0];
+        clicked_button.value = CHANGE_OPTIONS["false"][0];
+        clicked_button.innerHTML = CHANGE_OPTIONS["false"][1];
     }
 }
 
@@ -115,10 +130,6 @@ function change_event(event_id) {
 // it would take a dict input to function similarly to kwargs
 function fetch_change_event(event_id, new_year, new_month, new_day, new_time, csrftoken) {
 
-    // change the on screen inner html to reflect the change in input
-    const date_p = document.getElementById(`event-${event_id}-date`);
-    const time_p = document.getElementById(`event-${event_id}-time`);
-
     fetch(`${window.location.origin}/Forum/change_event/`, {
         method: "PUT",
         headers: {"X-CSRFToken":csrftoken },
@@ -133,5 +144,21 @@ function fetch_change_event(event_id, new_year, new_month, new_day, new_time, cs
         })
     })
 
+    // reload updates all the information rather than trying to pass this through the response
     location.reload()
+}
+
+function fetch_and_toggle_open(event_id, open, csrftoken) {
+
+    fetch(`${window.location.origin}/Forum/change_event/`, {
+        method: "PUT",
+        headers: {"X-CSRFToken":csrftoken },
+    
+        body: JSON.stringify({
+            'open':open,
+            'action':'toggle_open',
+            'target_event':event_id,
+        })
+    })
+
 }
