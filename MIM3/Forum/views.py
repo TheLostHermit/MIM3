@@ -16,6 +16,9 @@ from django.urls import reverse
 from django.http.response import JsonResponse
 import json
 
+# utility imports
+from datetime import date, time
+
 # importing models and forms from other files in this folder
 from .forms import * # models are imported through this as well
 
@@ -288,7 +291,7 @@ class ManageEventsView(ListView):
     model = Event
 
     # overriding default template path
-    template_name = "Forum/post_pages/mng_post_imgs.html"
+    template_name = "Forum/post_pages/mng_events.html"
 
     def get_queryset(self, *args, **kwargs):
 
@@ -300,12 +303,9 @@ class ManageEventsView(ListView):
     # uses the event form for all instances where the event is created or changed
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['event_form'] = ... #EventForm()
+        context['event_form'] = EventForm()
         context['post_pk'] = self.kwargs['post_pk']
-
-
-
-
+        return context
 
 # detail views for organizations and people
 # view used for displaying a profile's information
@@ -428,7 +428,6 @@ def ProjectBidView(request):
     # if some sort of other request was made to the url redirect to the home page
     return (HttpResponseRedirect(reverse('index')))
    
-
 # view that updates images when a user adds or deletes images from a post
 @permission_required('Forum.can_post', login_url= 'index')
 def ChangeImgView(request, post_pk):
@@ -484,10 +483,121 @@ def ChangeImgView(request, post_pk):
                 image.save()
 
             # takes you back to the editing view
-            return HttpResponseRedirect(reverse('change_imgs', kwargs={'pk':current_post.pk}))
+            return HttpResponseRedirect(reverse('manage_imgs', kwargs={'pk':current_post.pk}))
 
 
     return HttpResponseRedirect(reverse('index'))
+
+@permission_required('Forum.can_post', login_url= 'index')
+def ChangeEventView(request):
+
+    if request.method == "POST":
+
+        new_event_form = EventForm(request.POST)
+        post_id = request.POST["post-id"]
+
+        target_post_filter = Post.objects.filter(pk=post_id)
+
+        if target_post_filter.exists():
+
+            target_post = target_post_filter[0]
+
+            if new_event_form.is_valid():
+
+                new_event = new_event_form.save(commit=False)
+                new_event.post = target_post
+                new_event.save()
+
+                # if this post is not yet a project then make it so
+                if not target_post.is_project:
+                    target_post.is_project = True
+                    target_post.save()
+
+                # takes you back to the editing view
+                return HttpResponseRedirect(reverse('manage_events', kwargs={'post_pk':target_post.pk}))
+
+
+    elif request.method == "PUT":
+
+        data = json.loads(request.body)
+
+        if data.get('target_event') is not None and data.get('action') is not None:
+
+            target_event_filter = Event.objects.filter(pk=data['target_event'])
+
+            if target_event_filter.exists():
+
+                target_event = target_event_filter[0]
+                action = data['action']
+
+                if action == "delete":
+                    
+                    # if the event is being deleted see whether this is the last event in the project, and if so make it a post
+                    if data.get('target_post') is not None:
+
+                        target_post_filter = Post.objects.filter(pk=data['target_post'])
+
+                        if target_post_filter.exists():
+
+                            target_post = target_post_filter[0]
+                            
+                            total_events = target_post.project_times.count()
+                            print(f"total events: {total_events}")
+                            
+                            if total_events == 1:
+                                target_post.is_project = False
+                                target_post.save()
+
+                            target_event.delete()
+                            return HttpResponse(status=204)
+
+                elif action == "change":
+
+                    error = False
+                    new_time_string = data['new_time']
+
+                    print(new_time_string)
+                    
+                    # if the new time was left empty
+                    if new_time_string == "":
+
+                        new_time_string = str(target_event.time)
+
+                    new_time_components = new_time_string.split(':')
+
+                    new_hour = int(new_time_components[0])
+                    new_minutes = int(new_time_components[1])
+
+                    # try to see if a valid date can be made from the date text input, else reset to current date value
+                    try:
+                        new_date = date(int(data['new_year']), int(data['new_month']), int(data['new_day']))
+
+                    except:
+                        new_date = target_event.date
+
+                    # try to see if a valid time can be made from the time text input, else reset to current time value
+                    try:
+                        new_time = time(new_hour, new_minutes)
+
+                    except:
+                        new_time = target_event.time
+
+                    if (new_date <= date.today()):
+
+                        return JsonResponse({
+                            "error":"date is in the past or today"
+                        }, status=400)
+
+                    else:
+
+                        target_event.date = new_date
+                        target_event.time = new_time
+                        target_event.save()
+                        return HttpResponse(status=204)                
+
+    # default reverse page if URL was accessed incorrectly (consider making an "error" page)
+    return HttpResponseRedirect(reverse('index'))
+
 
 # sign up, sign in and sign out functions
 def signup(request):

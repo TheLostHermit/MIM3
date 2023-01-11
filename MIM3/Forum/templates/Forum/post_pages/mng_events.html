@@ -1,0 +1,91 @@
+{% extends "Forum/layouts/sidebar_layout.html" %}
+{% load static %}
+
+{% block title %}
+{{ post.title }}
+{% endblock %}
+
+{% block script %}
+    <script src = "{% static 'Forum/script/mng_events.js' %}"</script>
+{% endblock %}
+
+{% block body %}
+
+
+    <!-- A form to create a new event -->
+
+    <div>
+        <form action="{% url 'change_event' %}" method="post">
+            {% csrf_token %}
+            {{ event_form }}
+
+            <input type="hidden" name="post-id" id="post-id-input" value={{ post_pk }}>
+
+            <input type="submit" value="add event">
+
+        </form>
+    </div>
+
+    <hr>
+
+    <!-- a list view for all the images currently associated with the project-->
+
+    <div>
+
+        <!--Maintaining the post ID as an input for the PUT request (technically uneccessary
+            but maintaining the overall view structure makes most sense) -->
+        
+        
+        
+        {% for event in event_list %}
+
+            <!-- displays the event along with a hidden div which can be used to change that event -->
+            <div id="event-{{event.pk}}-div">
+
+                <div id="event-{{event.pk}}-info-div">
+
+                    <p id="event-{{event.pk}}-date">{{ event.date }}</p> at
+                    
+                    <p id="event-{{event.pk}}-time">{{ event.time }}</p>
+
+                    <button id="delete-{{event.pk}}-warning-btn" onclick="delete_event_warning({{event.id}})">Delete Event</button>
+                    <button id="toggle-change-{{event.pk}}-btn" value="none" onclick="toggle_change({{event.id}})">Change Event Date or Time</button>
+
+                </div>
+
+                <!-- div for the buttons which confirm deletion of an event-->
+                <div id="confirm-delete-{{event.pk}}-div" style="display:None">
+
+                    <p>Are you sure you want to delete this event? It will remove all links between this date and volunteers.
+                        This action cannot be undone!</p>
+
+                    <button id="delete-{{event.pk}}-btn"  onclick="delete_event({{event.id}})">Confirm</button>
+                    <button id="delete-{{event.pk}}-btn"  onclick="cancel_delete_event({{event.id}})">Cancel</button>
+
+                </div>
+
+                <div id="event-{{event.pk}}-change-div" style="display:None">                    
+
+                    <!-- by default the input is invalid. The input is only valid when the div is visible-->
+                    <input type="hidden" name = "event_validity" id="event-{{event.pk}}-validity-input" value="invalid">
+                    <input type="hidden" name="event_id" value="{{event.pk}}">
+                    {% csrf_token %}
+                    {{ event_form }}
+
+                    <button type="button" onclick="change_event({{event.pk}})">Make Changes</button>                    
+
+                </div>
+            </div>
+
+
+        <hr>
+
+        {% empty %}
+            There are no longer any events associated with this post
+
+        {% endfor %}
+
+    </div>
+
+
+{% endblock %}
