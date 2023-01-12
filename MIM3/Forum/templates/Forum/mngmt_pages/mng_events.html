@@ -39,9 +39,7 @@
 
                 <div id="event-{{event.pk}}-info-div">
 
-                    <p id="event-{{event.pk}}-date">{{ event.date }}</p> at
-                    
-                    <p id="event-{{event.pk}}-time">{{ event.time }}</p>
+                    <p>{{ event.datetime }}</p>
 
                     <!-- if the event is open, display the button indicating that it can be closed, else vice versa 
                         do not display this option if the event has passed -->

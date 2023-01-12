@@ -14,8 +14,9 @@ Participants
     <form method="post" action="{% url 'change_status' %}">
         {% csrf_token %}
 
-        <!-- only display a submit button if the list has any values -->
+        <!-- only display a submit button and the button to copy emails if the list has any values -->
         {% if bid_list %}
+
             <!-- button to copy the emails of the participants in this list -->
             <button type="button" id="copy-emails-button" onclick = "copy_text(this, '{{ mail_list }}')">Copy Emails for this List</button>
             <input type="submit" value="Save Changes">
@@ -27,7 +28,7 @@ Participants
         {% for bid in bid_list %}
 
         <div id="bid-{{ bid.pk }}-div">
-            <h1>{{ bid.bidder.first_name }} {{ bid.bidder.last_name }}</h1>
+            <h1>{{ bid.bidder.get_full_name }}</h1>
             <a href="{% url 'profile_view' pk=bid.bidder.pk %}" target="_blank" rel="noopener noreferrer">{{ bid.bidder.username}}</a> <br>
 
             {{ bid.get_status_form }}

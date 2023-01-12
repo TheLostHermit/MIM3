@@ -40,7 +40,7 @@ Written on {{ post.timestamp }} by {{ post.author }} from <a href="{% url 'organ
 
         {% for event in post.project_times.all %}
 
-            <label for="event-{{event.pk}}-btn">{{ event.date }} {{ event.time }}</label>
+            <label for="event-{{event.pk}}-btn">{{ event.datetime }}</label>
         
             {% if event.open %}
 

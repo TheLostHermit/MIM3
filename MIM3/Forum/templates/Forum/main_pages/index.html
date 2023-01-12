@@ -39,8 +39,7 @@ Home
                 {% for event in post.project_times.all %}
 
                     {% if event.open %}
-                        {{ event.date }}
-                        {{ event.time }}
+                        {{ event.datetime }}
                         <br>
 
                     {% endif %}
