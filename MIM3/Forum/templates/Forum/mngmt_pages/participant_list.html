@@ -1,0 +1,35 @@
+{% extends "Forum/layouts/sidebar_layout.html" %}
+{% load static %}
+
+{% block title %}
+Participants
+{% endblock %}
+
+{% block script %}
+    <script src = "{% static 'Forum/script/participant_list.js' %}"</script>
+{% endblock %}
+
+{% block body %}
+
+    <!-- button to copy the emails of the participants in this list -->
+    <button type="button" id="copy-emails-button" onclick = "copy_emails(this, '{{ mail_list }}')">Copy Emails for this List</button>
+
+    <!-- For each participant render their name with a hyperlink to their profile -->
+    {% for bid in bid_list %}
+
+    <div id="bid-{{ bid.pk }}-div">
+        <h1>{{ bid.bidder.first_name }} {{ bid.bidder.last_name }}</h1>
+        <a href="{% url 'profile_view' pk=bid.bidder.pk %}" target="_blank" rel="noopener noreferrer">{{ bid.bidder.username}}</a> <br>
+
+        {{ bid.get_status_form }}
+
+    </div>
+
+    <hr>
+
+    <!-- if there are no bids on this event -->
+    {% empty %}
+        <p>There are no participants for this event</p>
+
+    {% endfor %}
+{% endblock %}

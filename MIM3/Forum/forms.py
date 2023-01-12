@@ -58,3 +58,4 @@ class EventForm(ModelForm):
 EventFormset = modelformset_factory(
     Event, EventForm
 )
+

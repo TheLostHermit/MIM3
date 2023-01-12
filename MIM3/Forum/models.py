@@ -5,6 +5,9 @@ from django.utils import timezone
 # validators
 from django.core.validators import MinValueValidator
 
+# forms for properties of models
+from .property_forms import *
+
 # Create your models here.
 
 # Model holding information on an organization
@@ -49,6 +52,25 @@ class Post(models.Model):
 
         type = self.is_project and "Project" or "Post"
         return f"{type} : {self.title}"
+
+    # adds a property which sends out a form which lets the user filter volunteers by event and type
+    @property
+    def get_volunteer_search_form(self):
+
+        if self.is_project:
+
+            EVENT_CHOICES = []
+
+            # get all the events of this project
+            for event in self.project_times.all():
+
+                if event.open:
+
+                    # %-I throws an error so currently leading 0 remains in the hour section
+                    EVENT_CHOICES.append((event.pk, f"{event.date.strftime('%d %B, %Y')} at {event.time.strftime('%I:%M%p')}"))
+
+            # technically the form works without the prefix but it results in multiple forms with the same ID
+            return VolunteerSearchForm(EVENT_CHOICES, prefix=self.pk)
 
 # associates dates and times with posts (projects) so that users can volunteer to participate
 class Event(models.Model):
@@ -108,6 +130,11 @@ class Bid(models.Model):
     bidder = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='bids')
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='bids')
     status = models.CharField(max_length=2, choices=STATUS_OPTIONS, default=STATUS_OPTIONS[0][0])
+
+    # a property which will return a radio form for a user to select the current status of the bid
+    @property
+    def get_status_form(self):
+        return StatusForm(initial={"status":self.status}, prefix=self.pk)
 
     def __str__(self):
         return f"{self.bidder.username}'s bid on {self.event.post.title}"

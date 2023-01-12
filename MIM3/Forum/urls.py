@@ -31,6 +31,8 @@ urlpatterns = [
     path("pinned", login_required(views.PinnedOrgsView.as_view()), name="pinned_view"),
     path("profile/<int:pk>", views.ProfileDetailView.as_view(), name="profile_view"),
     path("organization/<int:pk>", views.OrgDetailView.as_view(), name="organization_view"),
+    path("search_volunteers/", views.ViewVolunteersView, name="search_volunteers"),
+    path("view_volunteers/<int:event_pk>/<str:status>", views.VolunteerListView.as_view(), name="view_volunteers"),
 
     # paths for pinning and unpinning organizations
     path("pinned/change_pin", views.ChangePinOrgView, name="change_pin"),

@@ -231,8 +231,7 @@ class ManagePostsView(ListView):
 
         queryset = super(ManagePostsView, self).get_queryset(*args, **kwargs)
 
-        # return the queryset filtered by the user's organization all in reverse chronological order
-        
+        # return the queryset filtered by the user's organization all in reverse chronological order        
         current_profile = Profile.objects.get(pk=self.request.user.pk)
         return queryset.filter(organization=current_profile.membership).order_by("-timestamp")
 
@@ -331,6 +330,40 @@ class OrgDetailView(DetailView):
         is_pinned = self.object.followers.filter(pk=self.request.user.pk)
         context['pinned'] = is_pinned.exists()
 
+        return context
+
+# view displaying all volunteers needed in a query
+class VolunteerListView(ListView):
+
+    model = Bid
+
+    # overriding default template path (change)
+    template_name = "Forum/mngmt_pages/participant_list.html"
+
+    def get_queryset(self, *args, **kwargs):
+
+        queryset = super(VolunteerListView, self).get_queryset(*args, **kwargs)
+        target_event = Event.objects.get(pk=self.kwargs['event_pk'])
+        target_status = self.kwargs['status']
+
+        # if all participants are being targeted just return all for the event
+        if target_status == "AA":
+            return queryset.filter(event=target_event)
+
+        else:
+            return queryset.filter(status=target_status, event=target_event)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        mail_string = ""
+
+        for bid in self.get_queryset():
+
+            print(bid)
+            mail_string += (f"{bid.bidder.email}, ") 
+
+        context['mail_list'] = mail_string
         return context
 
 # view which is called when the user unpins and organization
@@ -580,7 +613,6 @@ def ChangeEventView(request):
 
                 elif action == "change":
 
-                    error = False
                     new_time_string = data['new_time']
 
                     print(new_time_string)
@@ -590,6 +622,9 @@ def ChangeEventView(request):
 
                         new_time_string = str(target_event.time)
 
+                    # this only works in ideal situations when the user has inputted 24hr time with a colon 
+                    # between the hours and minutes. Hence by default we only try to make a time out of the 
+                    # input
                     new_time_components = new_time_string.split(':')
 
                     new_hour = int(new_time_components[0])
@@ -625,6 +660,32 @@ def ChangeEventView(request):
     # default reverse page if URL was accessed incorrectly (consider making an "error" page)
     return HttpResponseRedirect(reverse('index'))
 
+@permission_required('Forum.can_post', login_url= 'index')
+def ViewVolunteersView(request):
+
+    # takes in the form input of the event query and redirects to the listview with the appropriate settings
+    if request.method == "POST":
+
+        post_id = request.POST['post_id']
+        post_filter = Post.objects.filter(pk=post_id)
+
+        if post_filter.exists():
+
+            event = request.POST[f"{post_id}-event"]
+            status = request.POST[f"{post_id}-status"]
+
+            # makes sure the event is valid
+            event_filter = Event.objects.filter(pk=event)
+
+            if event_filter.exists():
+
+                return HttpResponseRedirect(reverse('view_volunteers', kwargs={
+                    'event_pk':event, 
+                    'status': status
+                }))
+
+        # else the event no longer exists and re-render this page
+        return HttpResponseRedirect(reverse('manage_posts_view'))
 
 # sign up, sign in and sign out functions
 def signup(request):

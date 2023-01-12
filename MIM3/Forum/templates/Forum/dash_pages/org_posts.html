@@ -15,13 +15,35 @@ Post Dashboard
 
     {% for post in post_list %}
 
-        <h1> {{ post.title }} </h1>
-        Org Name: {{ post.organization.name }}
+        <h1><a href="{% url 'detail_view' pk=post.pk %}">{{ post.title }}</a></h1>
 
         <a class="btn btn-primary" href="{% url 'delete_post' pk=post.pk %}"> Delete </a>
         <a class="btn btn-primary" href="{% url 'change_post' pk=post.pk %}"> Edit title or body </a>
         <a class="btn btn-primary" href="{% url 'manage_imgs' post_pk=post.pk %}"> Manage Related Images </a>
-        <a class="btn btn-primary" href="{% url 'manage_events' post_pk=post.pk %}"> Manage Related Events </a>
+
+        <!-- if this is a post adding new events will make it a project -->
+        <a class="btn btn-primary" href="{% url 'manage_events' post_pk=post.pk %}"> 
+            {% if post.is_project %}
+                Manage Project dates
+            {% else %}
+                Add dates and make project
+            {% endif %}
+        </a>
+
+        <div>
+            {% if post.is_project %}
+
+            <form action="{% url 'search_volunteers' %}" method="post">
+                {% csrf_token %}
+                {{ post.get_volunteer_search_form }}
+
+                <input type="hidden" name="post_id" value="{{post.pk}}">
+                <input type="submit" value="search">
+
+            </form>
+
+            {% endif %}
+        </div>
 
 
         <hr>
