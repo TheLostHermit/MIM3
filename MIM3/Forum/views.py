@@ -372,6 +372,7 @@ class VolunteerListView(ListView):
         context['bid_ids'] = bid_ids
         return context
 
+# view for creating a new message to send to a group
 class NewMessageView(CreateView):
 
     model = Message
@@ -423,7 +424,8 @@ class NewMessageView(CreateView):
             new_message = Message.objects.create(
                 content = content,
                 sender = sender,
-                sending_org = sending_org
+                sending_org = sending_org,
+                event = target_event
             )
 
             new_message.recipient.add(*recipients)
@@ -431,8 +433,53 @@ class NewMessageView(CreateView):
 
         return HttpResponseRedirect(self.get_success_url())
 
-        
+# view to see messages sent by an organization
+class SentMessagesView(ListView):
 
+    model = Message
+
+    # overriding default template path (change)
+    template_name = "Forum/message_pages/sent_messages.html"
+
+    # render only the messages sent by this organization
+    def get_queryset(self, *args, **kwargs):
+
+        queryset = super(SentMessagesView, self).get_queryset(*args, **kwargs)
+        current_profile = Profile.objects.get(pk=self.request.user.pk)
+        return queryset.filter(sending_org=current_profile.membership).order_by("-timestamp")
+
+class ReceivedMessagesView(ListView):
+
+    model = Message
+
+    # overriding default template path (change)
+    template_name = "Forum/message_pages/received_messages.html"
+
+    # render only the messages received by this user
+    def get_queryset(self, *args, **kwargs):
+
+        queryset = super(ReceivedMessagesView, self).get_queryset(*args, **kwargs)
+        current_profile = Profile.objects.get(pk=self.request.user.pk)
+        return queryset.filter(recipient=current_profile).order_by("-timestamp")
+
+class DeleteMessagesView(DeleteView):
+
+    model = Message
+
+    # overriding default template path (change)
+    template_name = "Forum/util_pages/delete_page.html"
+
+    # adding a message to the delete view
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        message = "It will delete this message from all recipients as well."
+        context['message'] = message
+
+        return context
+
+    def get_success_url(self):
+        return reverse('sent_messages')
 
 
 

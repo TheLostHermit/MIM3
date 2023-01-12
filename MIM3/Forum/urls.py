@@ -45,5 +45,8 @@ urlpatterns = [
 
     # paths for sending/seeing messages
     path("send_message/<int:event_pk>/<str:status>", permission_required("Forum.can_post")(views.NewMessageView.as_view()), name = "send_message"),
-    
+    path("sent_messages", permission_required("Forum.can_post")(views.SentMessagesView.as_view()), name = "sent_messages"),
+    path("received_messages", login_required(views.ReceivedMessagesView.as_view()), name = "received_messages"),
+    path("delete_message/<int:pk>", permission_required("Forum.can_post")(views.DeleteMessagesView.as_view()), name = "delete_message"),
+
 ]

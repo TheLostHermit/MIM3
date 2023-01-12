@@ -1,0 +1,43 @@
+{% extends "Forum/layouts/sidebar_layout.html" %}
+{% load static %}
+
+{% block title %}
+Received Messages
+{% endblock %}
+
+{% block script %}
+    
+{% endblock %}
+
+{% block body %}
+    <h1>Received Messages</h1>
+
+    <!-- for every sent message display the message sender and content -->
+    {% for message in message_list %}
+
+        <div>
+
+            <p> 
+                Sent by: {{ message.sender.get_full_name }} ({{ message.sender.username }})
+                 at {{ message.timestamp }}
+                For {{ message.event.project.title }} ({{ message.event.datetime }})
+            </p>
+
+            Contents:
+            <p> {{ message.content }} </p>
+
+            <button type="button" onclick="copy_text(this, 'Copy Email', '{{ message.sender.email}}')">Copy Email</button>
+            <button type="button" onclick="copy_text(this, 'Copy Email of {{message.sending_org.name}}', '{{ message.sending_org.official_email}}')">Copy Email of {{message.sending_org.name}}</button>
+
+            <hr>
+
+        </div>
+
+    <!-- if the user's organization hasn't sent any messages -->
+    {% empty %}
+
+        <p> You have not received any messages yet </p>
+
+    {% endfor %}
+
+{% endblock %}

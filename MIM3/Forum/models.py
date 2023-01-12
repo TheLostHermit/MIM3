@@ -67,7 +67,7 @@ class Post(models.Model):
                 if event.open:
 
                     # %-I throws an error so currently leading 0 remains in the hour section
-                    EVENT_CHOICES.append((event.pk, f"{event.date.strftime('%d %B, %Y')} at {event.time.strftime('%I:%M%p')}"))
+                    EVENT_CHOICES.append((event.pk, f"{event.date.strftime('%d %B, %Y')} at {event.time.strftime('%I:%M %p')}"))
 
             # technically the form works without the prefix but it results in multiple forms with the same ID
             return VolunteerSearchForm(EVENT_CHOICES, prefix=self.pk)
@@ -90,6 +90,11 @@ class Event(models.Model):
         else:
             return False
 
+    # property which returns the formatted date and time of an event at once
+    @property
+    def datetime(self):
+        return f"{self.date.strftime('%d %B, %Y')} at {self.time.strftime('%I:%M %p')}"
+
     def __str__(self):
         return f"Event from {self.post.title}"
 
@@ -109,6 +114,7 @@ class PostImage(models.Model):
 class Message(models.Model):
     content = models.TextField(null=False, blank=False)
     sender = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, related_name="sent_messages")
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, null=True, blank=True, related_name="messages")
     sending_org = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True, related_name="sent_messages")
     recipient = models.ManyToManyField(Profile, related_name='received_messages')
     timestamp = models.DateTimeField(default=timezone.now, blank=True, null=True)

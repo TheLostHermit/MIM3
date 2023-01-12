@@ -16,6 +16,9 @@
         <!-- script for any page -->        
         {% block script %}
         {% endblock %}
+
+        <!-- util script file for this page -->
+        <script src="{% static 'Forum/script/util.js' %}"></script>
     
 
         <!-- style for page -->
@@ -55,12 +58,14 @@
                     <a href="{% url 'pinned_view' %}">Pinned Organizations</a> <br>
                     <a href="{% url 'your_project_view' %}">Your Dashboard</a> <br>
                     <a href="{% url 'profile_view' pk=user.pk %}">See your profile</a> <br>
+                    <a href="{% url 'received_messages' %}">Received Messages</a> <br>
 
                     <!-- links that appear to members of an organization -->
                     {% if perms.Forum.can_post %}
 
                         <a href="{% url 'create_post' %}">Create a post</a> <br>
                         <a href="{% url 'manage_posts_view' %}">Organization Dashboard</a> <br>
+                        <a href="{% url 'sent_messages' %}">Sent Messages</a> <br>
 
                     {% endif %}
 
