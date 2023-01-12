@@ -26,8 +26,8 @@ Received Messages
             Contents:
             <p> {{ message.content }} </p>
 
-            <button type="button" onclick="copy_text(this, 'Copy Email', '{{ message.sender.email}}')">Copy Email</button>
-            <button type="button" onclick="copy_text(this, 'Copy Email of {{message.sending_org.name}}', '{{ message.sending_org.official_email}}')">Copy Email of {{message.sending_org.name}}</button>
+            <button type="button" onclick="copy_text(this,'{{ message.sender.email}}')">Copy {{ message.sender.get_full_name }}'s Email</button>
+            <button type="button" onclick="copy_text(this,'{{ message.sending_org.official_email}}')">Copy Email of {{message.sending_org.name}}</button>
 
             <hr>
 

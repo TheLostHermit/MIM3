@@ -31,12 +31,7 @@
     <!-- a list view for all the images currently associated with the project-->
 
     <div>
-
-        <!--Maintaining the post ID as an input for the PUT request (technically uneccessary
-            but maintaining the overall view structure makes most sense) -->
-        
-        
-        
+       
         {% for event in event_list %}
 
             <!-- displays the event along with a hidden div which can be used to change that event -->
@@ -64,9 +59,9 @@
 
                     {% endif %}
 
-
+                    <!-- these buttons display divs with further information for each of their functions -->
                     <button id="delete-{{event.pk}}-warning-btn" onclick="delete_event_warning({{event.id}})">Delete Event</button>
-                    <button id="toggle-change-{{event.pk}}-btn" value="none" onclick="toggle_change({{event.id}})">Change Event Date or Time</button>
+                    <button id="toggle-change-{{event.pk}}-btn" value="none" onclick="toggle_change(this, {{event.id}})">Change Event Date or Time</button>
 
                 </div>
 
@@ -83,21 +78,21 @@
 
                 <div id="event-{{event.pk}}-change-div" style="display:None">                    
 
-                    <!-- by default the input is invalid. The input is only valid when the div is visible-->
-                    <input type="hidden" name = "event_validity" id="event-{{event.pk}}-validity-input" value="invalid">
-                    <input type="hidden" name="event_id" value="{{event.pk}}">
-                    {% csrf_token %}
-                    {{ event_form }}
+                    <!-- sends a POST request to the change event url -->
+                    <form action="{% url 'change_event' %}" method="post">
+                        <input type="hidden" name="post-id" id="post-id-input" value={{ post_pk }}>
+                        <input type="hidden" name="event-id" value="{{event.pk}}">
+                        {% csrf_token %}
+                        {{ event_form }}
 
-                    <button type="button" onclick="change_event({{event.pk}})">Make Changes</button>                    
+                    <button type="submit">Make Changes</button>     
+                    </form>               
 
                 </div>
 
                 <hr>
             </div>
 
-
-        
 
         {% empty %}
             There are no events associated with this post

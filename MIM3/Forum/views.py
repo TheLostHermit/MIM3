@@ -642,30 +642,59 @@ def ChangeImgView(request, post_pk):
 @permission_required('Forum.can_post', login_url= 'index')
 def ChangeEventView(request):
 
+    # the post takes two types of forms: those to create events and those to change existing ones
     if request.method == "POST":
 
-        new_event_form = EventForm(request.POST)
         post_id = request.POST["post-id"]
+        event_form = EventForm(request.POST)
+
+        # an event ID may not be passed in the request
+        try:
+            event_id = request.POST["event-id"]
+        except:
+            event_id = None
 
         target_post_filter = Post.objects.filter(pk=post_id)
 
+        # once the post exists 
         if target_post_filter.exists():
 
             target_post = target_post_filter[0]
 
-            if new_event_form.is_valid():
+            # if the event is being edited the form will have a field with the ID of th event
+            if event_id is not None:
 
-                new_event = new_event_form.save(commit=False)
-                new_event.post = target_post
-                new_event.save()
+                target_event_filter = Event.objects.filter(pk=event_id)
 
-                # if this post is not yet a project then make it so
-                if not target_post.is_project:
-                    target_post.is_project = True
-                    target_post.save()
+                # if the event can be found
+                if target_event_filter.exists():
 
-                # takes you back to the editing view
-                return HttpResponseRedirect(reverse('manage_events', kwargs={'post_pk':target_post.pk}))
+                    target_event = target_event_filter[0]
+
+                    # if the input to the form is valid save the changes to the event and reload the page
+                    if event_form.is_valid():
+
+                        target_event.date = event_form.cleaned_data['date']
+                        target_event.time = event_form.cleaned_data['time']
+                        target_event.save()
+
+            # if the event is being created there will be no ID for the event
+            else:
+
+                if event_form.is_valid():
+
+                    new_event = event_form.save(commit=False)
+                    new_event.post = target_post
+                    new_event.save()
+
+                    # if this post is not yet a project then make it so
+                    if not target_post.is_project:
+                        target_post.is_project = True
+                        target_post.save()
+
+            # takes you back to the editing view
+            return HttpResponseRedirect(reverse('manage_events', kwargs={'post_pk':target_post.pk}))
+
 
 
     elif request.method == "PUT":
@@ -726,54 +755,7 @@ def ChangeEventView(request):
 
                         # if there was no error save the event and return a successful response    
                         target_event.save()
-                        return HttpResponse(status=204)
-
-
-                elif action == "change":
-
-                    new_time_string = data['new_time']
-
-                    print(new_time_string)
-                    
-                    # if the new time was left empty
-                    if new_time_string == "":
-
-                        new_time_string = str(target_event.time)
-
-                    # this only works in ideal situations when the user has inputted 24hr time with a colon 
-                    # between the hours and minutes. Hence by default we only try to make a time out of the 
-                    # input
-                    new_time_components = new_time_string.split(':')
-
-                    new_hour = int(new_time_components[0])
-                    new_minutes = int(new_time_components[1])
-
-                    # try to see if a valid date can be made from the date text input, else reset to current date value
-                    try:
-                        new_date = date(int(data['new_year']), int(data['new_month']), int(data['new_day']))
-
-                    except:
-                        new_date = target_event.date
-
-                    # try to see if a valid time can be made from the time text input, else reset to current time value
-                    try:
-                        new_time = time(new_hour, new_minutes)
-
-                    except:
-                        new_time = target_event.time
-
-                    if (new_date <= date.today()):
-
-                        return JsonResponse({
-                            "error":"date is in the past or today"
-                        }, status=400)
-
-                    else:
-
-                        target_event.date = new_date
-                        target_event.time = new_time
-                        target_event.save()
-                        return HttpResponse(status=204)                
+                        return HttpResponse(status=204)     
 
     # default reverse page if URL was accessed incorrectly (consider making an "error" page)
     return HttpResponseRedirect(reverse('index'))

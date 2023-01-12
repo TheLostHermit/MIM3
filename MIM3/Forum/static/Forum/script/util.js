@@ -1,8 +1,9 @@
 // general function to copy text and change the display of the copying button for a few seconds
-function copy_text(this_button, button_display, text) {
+function copy_text(this_button, text) {
 
         navigator.clipboard.writeText(text);
         const current_button = this_button;
+        const button_display = current_button.innerHTML;
         current_button.innerHTML = "Copied";
         setTimeout(function () {
             reset_copy_button(current_button, button_display)
