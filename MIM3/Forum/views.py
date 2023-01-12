@@ -151,7 +151,7 @@ class DeleteYourBidView(DeleteView):
     # adds the delete message specific to this in the context
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        message = f"Are you sure you want to leave {self.object.event.post.title} at {self.object.event.datetime()}? It will no longer appear in this feed and you will lose its messages."
+        message = f"Are you sure you want to leave {self.object.event.post.title} at {self.object.event.datetime}? It will no longer appear in this feed and you will lose its messages."
         context['message'] = message
         return context
 
@@ -181,6 +181,18 @@ class DeletePostView(DeleteView):
 
     def get_success_url(self):
         return reverse('manage_posts_view')
+
+    # adds the delete message specific to this in the context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        message = f"Are you sure you want to delete the post '{self.object.title}'? Deleting this will delete all associated images"
+        
+        # if the post is a project also mention that events, volunteers etc. will be deleted
+        if self.object.is_project:
+            message += ", events, and volunteer or participant information."
+
+        context['message'] = message
+        return context
 
 # view changes the title or body of a selected post
 class ChangePostView(UpdateView):
