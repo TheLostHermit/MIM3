@@ -18,9 +18,10 @@ import json
 
 # utility imports
 from datetime import date, time
+import re
 
 # importing models and forms from other files in this folder
-from .forms import * # models are imported through this as well
+from .forms import * # models and property forms are imported through this as well
 
 # the number of list items to display before pagination is controlled by this global variable
 PAGINATE_NO = 5
@@ -357,13 +358,19 @@ class VolunteerListView(ListView):
         context = super().get_context_data(**kwargs)
 
         mail_string = ""
+        bid_ids = []
+        bidder_ids = []
 
         for bid in self.get_queryset():
-
-            print(bid)
             mail_string += (f"{bid.bidder.email}, ") 
+            bid_ids.append(bid.pk)
+            bidder_ids.append(bid.bidder.pk)
 
+        # NB: there are probably better ways to pass the IDs of all elements
+        # in the list view to other views
         context['mail_list'] = mail_string
+        context['bid_ids'] = bid_ids
+        context['bidder_ids'] = bidder_ids
         return context
 
 # view which is called when the user unpins and organization
@@ -686,6 +693,38 @@ def ViewVolunteersView(request):
 
         # else the event no longer exists and re-render this page
         return HttpResponseRedirect(reverse('manage_posts_view'))
+
+
+def ChangeVolunteerView(request):
+
+    if request.method == "POST":
+
+        # get all the IDs from the bid ID field in the form.
+        # this can likely be made better but it's structured this way so that
+        # if another person updates the database (eg resigns or volunteers) before the person submitting this form
+        # sees the changes the request still has all necessary information to be completed
+        bid_list = re.findall(r'\d+',str(request.POST['bid_ids']))
+
+        for bid_id in bid_list:
+
+            bid_filter = Bid.objects.filter(pk=bid_id)
+            
+            if bid_filter.exists():
+
+                target_bid = bid_filter[0]
+
+                change_form_status = StatusForm(request.POST, prefix=bid_id)
+
+                if change_form_status.is_valid():
+                    
+                    target_bid.status = change_form_status.cleaned_data['status']
+                    target_bid.save()
+
+        return HttpResponseRedirect(reverse('manage_posts_view'))
+
+    # this should eventually become an error page
+    return HttpResponseRedirect(reverse('index'))
+
 
 # sign up, sign in and sign out functions
 def signup(request):

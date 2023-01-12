@@ -41,7 +41,6 @@ ImageFormset = modelformset_factory(
 )
 
 # form to add a variable number of events to a project
-
 class EventForm(ModelForm):
 
     class Meta:
