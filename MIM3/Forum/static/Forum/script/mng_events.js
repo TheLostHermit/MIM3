@@ -1,13 +1,13 @@
 
 // function that toggles the button for opening and closing an event
-function toggle_open(event_id) {
+function toggle_open(this_button, event_id) {
 
     OPEN_OPTIONS = {
         "open": ["true", "This event is open. Click to close"],
         "closed": ["false", "This event is closed. Click to open"]
     }
 
-    const toggle_button = document.getElementById(`toggle-open-event-${event_id}-btn`);
+    const toggle_button = this_button;
 
     // getting the CSRFToken for the request
     const csrftoken = document.querySelector(`#event-${event_id}-change-div [name='csrfmiddlewaretoken']`).value;

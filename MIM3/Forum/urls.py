@@ -7,7 +7,11 @@ from django.contrib.auth.decorators import login_required, permission_required
 from . import views
 
 urlpatterns = [
+
+    # general pages
     path("",  views.PostListView.as_view(), name="index"),
+    path("error", views.ErrorView, name="error_view"),
+    path("permission_denied", views.PermissionDeniedView, name="permission_denied"),
 
     # paths dealing with user authentication
     path("signup", views.signup, name="sign_up"),

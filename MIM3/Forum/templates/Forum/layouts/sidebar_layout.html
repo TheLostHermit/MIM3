@@ -50,7 +50,9 @@
         <!-- Using Bootstrap's row and column classes temporarily until styling is done -->
 
         <div class = "row">
-            <div id ="sidebar" class = "col col-3">
+            <div id ="sidebar" class = "col-3">
+
+                <a href="{% url 'index' %}">Home</a> <br>
 
                 <!-- links that only appear to logged in users-->
                 {% if user.is_authenticated %}
@@ -70,9 +72,8 @@
                     {% endif %}
 
                 {% endif %}
-                <a href="{% url 'index' %}">Link 1</a> <br>
-                <a href="{% url 'index' %}">Link 2</a> <br>
-                <a href="{% url 'index' %}">Link 3</a> <br>
+                
+                
             </div>
 
             <div id = "body" class = "col">

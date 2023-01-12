@@ -26,80 +26,7 @@ from .forms import * # models and property forms are imported through this as we
 # the number of list items to display before pagination is controlled by this global variable
 PAGINATE_NO = 5
 
-# in the case of permission required the user is actually redirected to the index
-# view used to create new posts
-@login_required(login_url= 'sign_in')
-@permission_required('Forum.can_post', login_url= 'index')
-def newPost(request):
-    HTML_PAGE = "Forum/post_pages/create_post.html"
-
-    image_formset = ImageFormset(prefix='image', queryset=PostImage.objects.none())
-    event_formset = EventFormset(prefix='event', queryset=Event.objects.none())
-
-    if request.method == "GET":
-
-        return render(request, HTML_PAGE, {
-            'image_formset': image_formset,
-            'post_form' : NewPostForm(),
-            'event_formset' : event_formset
-        })
-
-    # if the form is being submitted
-    elif request.method == "POST":
-
-        post_form = NewPostForm(request.POST)
-
-        # validate and save the post
-        if post_form.is_valid():
-            
-            new_post = post_form.save(commit=False)
-
-            # find the person who created this post in order to add their organization to it
-            post_author = Profile.objects.get(pk=request.user.pk)
-            new_post.author = post_author
-            if post_author.membership: new_post.organization = post_author.membership
-
-            new_post.save()
-
-            # create and save the images if the post is valid overall
-            image_form = ImageFormset(request.POST, request.FILES, prefix="image")
-
-            if image_form.is_valid():
-
-                for form in image_form:                  
-
-                    if ('image' in form.changed_data):
-
-                        image = form.save(commit=False)
-                        image.post = new_post
-                        image.save()
-            
-            # create and save events for the project if it is a project
-            if new_post.is_project:
-
-                event_form = EventFormset(request.POST, prefix='event')
-
-                if event_form.is_valid():
-
-                    for form in event_form:
-
-                        event = form.save(commit=False)
-                        event.post = new_post
-
-                        if event.date < timezone.now().date():event.open = False
-                        
-                        event.save()
-            
-            return (HttpResponseRedirect(reverse('index')))
-
-        else:
-
-            # if the post is not valid return the information to be edited
-            return render(request, HTML_PAGE, {
-            'image_formset': image_form,
-            'post_form' : post_form,
-            'event_formset' : event_form
-        })
+# class based views for basic display, editing and deletion of objects
 
 # view used for the feed which renders a list of all the posts made to the forum
 class PostListView(ListView):
@@ -165,7 +92,6 @@ class PostDetailsView(DetailView):
             context['post_events'] = post_events
 
         return context
-
 
 # view rendering a list of all the organizations the user has pinned
 class PinnedOrgsView(ListView):
@@ -236,7 +162,6 @@ class ManagePostsView(ListView):
         current_profile = Profile.objects.get(pk=self.request.user.pk)
         return queryset.filter(organization=current_profile.membership).order_by("-timestamp")
 
-
 # view deletes a selected post object and redirects to the organization dashboard
 class DeletePostView(DeleteView):
 
@@ -267,7 +192,7 @@ class ManagePostImgsView(ListView):
     model = PostImage
 
     # overriding default template path
-    template_name = "Forum/post_pages/mng_post_imgs.html"
+    template_name = "Forum/mngmt_pages/mng_post_imgs.html"
 
     def get_queryset(self, *args, **kwargs):
 
@@ -291,7 +216,7 @@ class ManageEventsView(ListView):
     model = Event
 
     # overriding default template path
-    template_name = "Forum/post_pages/mng_events.html"
+    template_name = "Forum/mngmt_pages/mng_events.html"
 
     def get_queryset(self, *args, **kwargs):
 
@@ -481,7 +406,96 @@ class DeleteMessagesView(DeleteView):
     def get_success_url(self):
         return reverse('sent_messages')
 
+# function based views (for rendering basic feedback pages)
+def ErrorView(request):
+    return render(request, "Forum/util_pages/error_page.html", {
+        "type":"error",
+    })
 
+def PermissionDeniedView(request):
+    return render(request, "Forum/util_pages/error_page.html", {
+        "type":"permission_required"
+    })
+
+def TestView(request):
+    return(HttpResponseRedirect(reverse('permission_denied')))
+# function based views (for processing forms)
+
+# view for creating a new post
+@permission_required('Forum.can_post', login_url= 'permission_denied')
+def newPost(request):
+    HTML_PAGE = "Forum/post_pages/create_post.html"
+
+    image_formset = ImageFormset(prefix='image', queryset=PostImage.objects.none())
+    event_formset = EventFormset(prefix='event', queryset=Event.objects.none())
+
+    if request.method == "GET":
+
+        return render(request, HTML_PAGE, {
+            'image_formset': image_formset,
+            'post_form' : NewPostForm(),
+            'event_formset' : event_formset
+        })
+
+    # if the form is being submitted
+    elif request.method == "POST":
+
+        post_form = NewPostForm(request.POST)
+
+        # validate and save the post
+        if post_form.is_valid():
+            
+            new_post = post_form.save(commit=False)
+
+            # find the person who created this post in order to add their organization to it
+            post_author = Profile.objects.get(pk=request.user.pk)
+            new_post.author = post_author
+            if post_author.membership: new_post.organization = post_author.membership
+
+            new_post.save()
+
+            # create and save the images if the post is valid overall
+            image_form = ImageFormset(request.POST, request.FILES, prefix="image")
+
+            if image_form.is_valid():
+
+                for form in image_form:                  
+
+                    if ('image' in form.changed_data):
+
+                        image = form.save(commit=False)
+                        image.post = new_post
+                        image.save()
+            
+            # create and save events for the project if it is a project
+            if new_post.is_project:
+
+                event_form = EventFormset(request.POST, prefix='event')
+
+                if event_form.is_valid():
+
+                    for form in event_form:
+
+                        event = form.save(commit=False)
+                        event.post = new_post
+
+                        if event.date < timezone.now().date():event.open = False
+                        
+                        event.save()
+            
+            return (HttpResponseRedirect(reverse('index')))
+
+        else:
+
+            # if the post is not valid return the information to be edited
+            return render(request, HTML_PAGE, {
+            'image_formset': image_form,
+            'post_form' : post_form,
+            'event_formset' : event_form
+        })
+
+    # if the request falls through the conditionals return an error view
+    return(HttpResponseRedirect(reverse('error_view')))
 
 # view which is called when the user unpins and organization
 def ChangePinOrgView(request):
@@ -532,12 +546,11 @@ def ChangePinOrgView(request):
                 }, status=400)
 
 
-    # if the user was trying to access the URL for some other reason redirect them
-    elif request.method == "GET":
-        return HttpResponseRedirect(reverse("index"))
+    # if the user was trying to access the URL for some other reason throw an error
+    return(HttpResponseRedirect(reverse('error_view')))
 
 # view that updates a volunteer bid when the user submits the form at the bottom of the project
-@login_required(login_url= 'sign_in')
+@login_required()
 def ProjectBidView(request):
 
     if request.method == "POST":
@@ -558,8 +571,6 @@ def ProjectBidView(request):
                 # if the person is volunteering see if they have already volunteered on the server side               
                 if not matching_bids.exists():
 
-                    print("no matching bid exists")
-
                     # if the person is a new volunteer create the bid
                     new_bid = Bid.objects.create(event=target_event, bidder=current_profile)
                     new_bid.save()
@@ -575,11 +586,11 @@ def ProjectBidView(request):
         # redirect to the dashboard that deals with all your volunteers
         return (HttpResponseRedirect(reverse('your_project_view')))
 
-    # if some sort of other request was made to the url redirect to the home page
-    return (HttpResponseRedirect(reverse('index')))
+    # if some sort of other request was made to the url throw an error
+    return(HttpResponseRedirect(reverse('error_view')))
    
 # view that updates images when a user adds or deletes images from a post
-@permission_required('Forum.can_post', login_url= 'index')
+@permission_required('Forum.can_post', login_url= 'permission_denied')
 def ChangeImgView(request, post_pk):
 
     current_posts = Post.objects.filter(pk=post_pk)
@@ -635,11 +646,11 @@ def ChangeImgView(request, post_pk):
             # takes you back to the editing view
             return HttpResponseRedirect(reverse('manage_imgs', kwargs={'pk':current_post.pk}))
 
-
-    return HttpResponseRedirect(reverse('index'))
+    # if some other request was made to the view throw an error
+    return(HttpResponseRedirect(reverse('error_view')))
 
 # view that creates, deletes or changes an event
-@permission_required('Forum.can_post', login_url= 'index')
+@permission_required('Forum.can_post', login_url= 'permission_denied')
 def ChangeEventView(request):
 
     # the post takes two types of forms: those to create events and those to change existing ones
@@ -757,11 +768,11 @@ def ChangeEventView(request):
                         target_event.save()
                         return HttpResponse(status=204)     
 
-    # default reverse page if URL was accessed incorrectly (consider making an "error" page)
-    return HttpResponseRedirect(reverse('index'))
+    # default reverse page if URL was accessed incorrectly
+    return(HttpResponseRedirect(reverse('error_view')))
 
 # view that returns the listview of all volunteers (bids) filtered by their status and event date
-@permission_required('Forum.can_post', login_url= 'index')
+@permission_required('Forum.can_post', login_url= 'permission_denied')
 def ManageVolunteersView(request, action):
 
     # takes in the form input of the event query and redirects to the listview with the appropriate settings
@@ -797,8 +808,11 @@ def ManageVolunteersView(request, action):
         # else the event no longer exists and re-render this page
         return HttpResponseRedirect(reverse('manage_posts_view'))
 
+    # if some other request was made to the view it was erroneous
+    return(HttpResponseRedirect(reverse('error_view')))
+
 # view that allows an organization member to change the status of the volunteer
-@permission_required('Forum.can_post', login_url= 'index')
+@permission_required('Forum.can_post', login_url= 'permission_denied')
 def ChangeVolunteerView(request):
 
     if request.method == "POST":

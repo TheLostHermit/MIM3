@@ -1,0 +1,31 @@
+{% extends "Forum/layouts/sidebar_layout.html" %}
+{% load static %}
+
+{% block title %}
+Error
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+
+{% block body %}
+
+    <!-- the page which renders when the site encounters an error-->
+
+    {% if type == "permission_required" %}
+        <h1>You do not have permission to perform this action...</h1>
+        <a class="btn btn-primary" href="{% url 'login' %}">Sign into a different account</a>
+
+
+    {% elif type == "error" %}
+        <h1>The site has encountered an error...</h1>
+
+    {% endif %}
+
+
+    
+    <button onclick="history.back()">Attempt to go Back</button>
+    <a class="btn btn-primary" href="{% url 'index' %}">Return to home</a> <br>
+    
+
+{% endblock %}

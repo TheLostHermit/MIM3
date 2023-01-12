@@ -49,9 +49,9 @@
                     {% if not event.passed %}
 
                         {% if event.open %}
-                            <button type="button" id="toggle-open-event-{{event.pk}}-btn" onclick="toggle_open({{event.pk}})" value="true">This event is open. Click to close</button>
+                            <button type="button" id="toggle-open-event-{{event.pk}}-btn" onclick="toggle_open(this, {{event.pk}})" value="true">This event is open. Click to close</button>
                         {% else %}
-                            <button type="button" id="toggle-open-event-{{event.pk}}-btn" onclick="toggle_open({{event.pk}})" value="false">This event is closed. Click to open</button>
+                            <button type="button" id="toggle-open-event-{{event.pk}}-btn" onclick="toggle_open(this, {{event.pk}})" value="false">This event is closed. Click to open</button>
                         {% endif %}
 
                     {% else %}
