@@ -1,7 +1,7 @@
 # imports for rendering/constructing views
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
-from django.views.generic.edit import DeleteView, UpdateView
+from django.views.generic.edit import DeleteView, UpdateView, CreateView
 
 # imports for authentication
 from django.contrib.auth import login, logout, authenticate
@@ -370,8 +370,71 @@ class VolunteerListView(ListView):
         # in the list view to other views
         context['mail_list'] = mail_string
         context['bid_ids'] = bid_ids
-        context['bidder_ids'] = bidder_ids
         return context
+
+class NewMessageView(CreateView):
+
+    model = Message
+    form_class = MessageForm
+
+    # overriding default template path
+    template_name = "Forum/message_pages/send_message.html"
+
+    # adds the information on who the message is being sent to in the context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['status'] = self.kwargs['status']
+        context['event_pk'] = self.kwargs['event_pk']
+
+        return context
+
+    # should eventually reverse to the "sent messages" view
+    def get_success_url(self):
+        return reverse('manage_posts_view')
+
+    # after the form is validated set the "sender", "sending organization" and "recipients"
+    def form_valid(self, form):
+
+        # by default the sender and organization are None because they are nullable
+        sender = Profile.objects.get(pk=self.request.user.pk) or None
+        sending_org = sender.membership or None
+        content = form.cleaned_data['content']
+
+        context = self.get_context_data()
+
+        target_event_filter = Event.objects.filter(pk=context['event_pk'])
+
+        if target_event_filter.exists():
+
+            # get the target event and use it to find all bids associated with that event/status
+            target_event = target_event_filter[0]
+
+            if context['status'] == "AA":
+
+                all_bids = Bid.objects.filter(event=target_event)
+
+            else:
+                all_bids = Bid.objects.filter(event=target_event, status = context['status'])
+
+            # gets all the recipient profiles from the bids
+            recipients = Profile.objects.filter(id__in=all_bids.values('bidder_id'))
+
+            # creates the new message and adds all the recipients to it
+            new_message = Message.objects.create(
+                content = content,
+                sender = sender,
+                sending_org = sending_org
+            )
+
+            new_message.recipient.add(*recipients)
+            new_message.save()
+
+        return HttpResponseRedirect(self.get_success_url())
+
+        
+
+
+
 
 # view which is called when the user unpins and organization
 def ChangePinOrgView(request):
@@ -528,6 +591,7 @@ def ChangeImgView(request, post_pk):
 
     return HttpResponseRedirect(reverse('index'))
 
+# view that creates, deletes or changes an event
 @permission_required('Forum.can_post', login_url= 'index')
 def ChangeEventView(request):
 
@@ -667,8 +731,9 @@ def ChangeEventView(request):
     # default reverse page if URL was accessed incorrectly (consider making an "error" page)
     return HttpResponseRedirect(reverse('index'))
 
+# view that returns the listview of all volunteers (bids) filtered by their status and event date
 @permission_required('Forum.can_post', login_url= 'index')
-def ViewVolunteersView(request):
+def ManageVolunteersView(request, action):
 
     # takes in the form input of the event query and redirects to the listview with the appropriate settings
     if request.method == "POST":
@@ -686,23 +751,30 @@ def ViewVolunteersView(request):
 
             if event_filter.exists():
 
-                return HttpResponseRedirect(reverse('view_volunteers', kwargs={
-                    'event_pk':event, 
-                    'status': status
-                }))
+                # if the action is list then it shows the view for the list of volunteers
+                if action == 'list':
+                    return HttpResponseRedirect(reverse('view_volunteers', kwargs={
+                        'event_pk':event, 
+                        'status': status
+                    }))
+
+                # if the action is message it shows the createview for the message
+                if action == 'message':
+                    return HttpResponseRedirect(reverse('send_message', kwargs={
+                        'event_pk':event, 
+                        'status': status
+                    }))
 
         # else the event no longer exists and re-render this page
         return HttpResponseRedirect(reverse('manage_posts_view'))
 
-
+# view that allows an organization member to change the status of the volunteer
+@permission_required('Forum.can_post', login_url= 'index')
 def ChangeVolunteerView(request):
 
     if request.method == "POST":
 
-        # get all the IDs from the bid ID field in the form.
-        # this can likely be made better but it's structured this way so that
-        # if another person updates the database (eg resigns or volunteers) before the person submitting this form
-        # sees the changes the request still has all necessary information to be completed
+        # get all the IDs from the bid ID field in the form
         bid_list = re.findall(r'\d+',str(request.POST['bid_ids']))
 
         for bid_id in bid_list:
@@ -724,7 +796,6 @@ def ChangeVolunteerView(request):
 
     # this should eventually become an error page
     return HttpResponseRedirect(reverse('index'))
-
 
 # sign up, sign in and sign out functions
 def signup(request):

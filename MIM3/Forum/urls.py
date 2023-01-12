@@ -31,8 +31,8 @@ urlpatterns = [
     path("pinned", login_required(views.PinnedOrgsView.as_view()), name="pinned_view"),
     path("profile/<int:pk>", views.ProfileDetailView.as_view(), name="profile_view"),
     path("organization/<int:pk>", views.OrgDetailView.as_view(), name="organization_view"),
-    path("search_volunteers/", views.ViewVolunteersView, name="search_volunteers"),
-    path("view_volunteers/<int:event_pk>/<str:status>", views.VolunteerListView.as_view(), name="view_volunteers"),
+    path("manage_volunteers/<str:action>", views.ManageVolunteersView, name="manage_volunteers"),
+    path("view_volunteers/<int:event_pk>/<str:status>", permission_required("Forum.can_post")(views.VolunteerListView.as_view()), name="view_volunteers"),
 
     # paths for pinning and unpinning organizations
     path("pinned/change_pin", views.ChangePinOrgView, name="change_pin"),
@@ -42,5 +42,8 @@ urlpatterns = [
     path("your_projects", login_required(views.YourBidListView.as_view()), name="your_project_view"),
     path("delete_bid/<int:pk>", login_required(views.DeleteYourBidView.as_view()), name="delete_bid"),
     path("change_status", views.ChangeVolunteerView, name="change_status"),
+
+    # paths for sending/seeing messages
+    path("send_message/<int:event_pk>/<str:status>", permission_required("Forum.can_post")(views.NewMessageView.as_view()), name = "send_message"),
     
 ]

@@ -54,7 +54,7 @@
 
                     <a href="{% url 'pinned_view' %}">Pinned Organizations</a> <br>
                     <a href="{% url 'your_project_view' %}">Your Dashboard</a> <br>
-                    <a href="{% url 'profile_view' pk=user.pk %}" target="_blank" rel="noopener noreferrer">See your profile</a> <br>
+                    <a href="{% url 'profile_view' pk=user.pk %}">See your profile</a> <br>
 
                     <!-- links that appear to members of an organization -->
                     {% if perms.Forum.can_post %}

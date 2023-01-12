@@ -1,0 +1,23 @@
+{% extends "Forum/layouts/sidebar_layout.html" %}
+{% load static %}
+
+{% block title %}
+Send Message
+{% endblock %}
+
+{% block script %}
+    
+{% endblock %}
+
+{% block body %}
+    <h1>Send a Message</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <input type="submit" value="send">
+
+    </form>
+
+{% endblock %}

@@ -23,8 +23,6 @@ function display_radio_value() {
         if (ele[i].checked) {
             console.log(ele[i])
 
-        }
-
-        
+        }        
     }
 }

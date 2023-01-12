@@ -58,3 +58,10 @@ EventFormset = modelformset_factory(
     Event, EventForm
 )
 
+class MessageForm(ModelForm):
+
+    class Meta:
+
+        model = Message
+        fields = ['content']
+

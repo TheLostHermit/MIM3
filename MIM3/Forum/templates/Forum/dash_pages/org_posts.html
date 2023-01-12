@@ -33,12 +33,15 @@ Post Dashboard
         <div>
             {% if post.is_project %}
 
-            <form action="{% url 'search_volunteers' %}" method="post">
+            <form method="post">
                 {% csrf_token %}
                 {{ post.get_volunteer_search_form }}
 
                 <input type="hidden" name="post_id" value="{{post.pk}}">
-                <input type="submit" value="search">
+
+                <!-- the user can either send a message to a group or see the list of people in it -->
+                <input type="submit" formaction="{% url 'manage_volunteers' action='list'  %}" value="search">
+                <input type="submit" formaction="{% url 'manage_volunteers' action='message'  %}" value="Send Message">
 
             </form>
 
