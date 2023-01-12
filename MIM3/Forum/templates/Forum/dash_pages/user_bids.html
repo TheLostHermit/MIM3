@@ -13,7 +13,7 @@ Your Volunteered Projects
 
     {% for bid in bid_list %}
 
-        <h1> {{ bid.event.post.title }} </h1>
+        <h1><a href="{% url 'detail_view' pk=bid.event.post.pk %}">{{ bid.event.post.title }}</a></h1>
 
         <!-- *Get status display is used to get the human readable name from the status choice field -->
         <b>Status:</b> {{ bid.get_status_display }} <br>

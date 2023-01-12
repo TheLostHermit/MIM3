@@ -6,11 +6,10 @@
 {% endblock %}
 
 {% block script %}
-    <script src = "{% static 'Forum/script/profile_details.js' %}"</script>
 {% endblock %}
 
 {% block body %}
-    <h1>{{ profile.first_name }} {{ profile.last_name }}</h1>
+    <h1>{{ profile.get_full_name }}</h1>
     Born on {{ profile.birthday }} 
 
     {% if profile.membership %}
@@ -23,9 +22,8 @@
     {% endif %}
 
     <!-- button used to copy email of profile -->
-    <input type="button" value="Copy Email" id="copy-email-btn">
-    <input type="hidden" value="{{ profile.email }}" id="profile-email">
-
+    <button type="button" onclick="copy_text(this, '{{ profile.email }}')">Copy Email</button>
+    
     <hr>
         {{ profile.biography }}
     <hr>

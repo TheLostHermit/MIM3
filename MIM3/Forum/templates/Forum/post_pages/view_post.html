@@ -49,12 +49,12 @@ Written on {{ post.timestamp }} by {{ post.author }} from <a href="{% url 'organ
                 {% if event in chosen_events %}
 
                     <input type="hidden" name="event-{{event.pk}}-status" id="event-{{event.pk}}-status" value="volunteered">
-                    <button type="button" id="event-{{event.pk}}-btn" onclick="toggle_volunteer({{event.pk}})">You volunteered for this event. Click to leave.</button>                    
+                    <button type="button" id="event-{{event.pk}}-btn" onclick="toggle_volunteer(this,{{event.pk}})">You volunteered for this event. Click to leave.</button>                    
         
                 {% else %}
 
                     <input type="hidden" name="event-{{event.pk}}-status" id="event-{{event.pk}}-status" value="not_volunteered">
-                    <button type="button" id="event-{{event.pk}}-btn" onclick="toggle_volunteer({{event.pk}})">Volunteer for this event.</button>  
+                    <button type="button" id="event-{{event.pk}}-btn" onclick="toggle_volunteer(this,{{event.pk}})">Volunteer for this event.</button>  
 
                 {% endif %} 
         

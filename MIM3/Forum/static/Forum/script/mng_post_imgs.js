@@ -13,7 +13,7 @@ function delete_image(post_img_id) {
     
 }
 
-function toggle_icon(image_id) {
+function toggle_icon(this_button, image_id) {
 
     // gets the CSRF token to validate the request
     const csrftoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
@@ -28,13 +28,11 @@ function toggle_icon(image_id) {
     }
 
     // (button in question)
-    clicked_button = document.getElementById(`toggle-img-${image_id}-isicon`);
+    clicked_button = this_button;
     console.log(clicked_button.value)
 
     // if the image is currently an icon, make that false and vice versa
     if (clicked_button.value == ICON_OPTIONS["true"][0]) {
-
-        console.log("currently an icon...")
 
         clicked_button.innerHTML = ICON_OPTIONS["false"][1];
         clicked_button.value = ICON_OPTIONS["false"][0];
@@ -43,8 +41,6 @@ function toggle_icon(image_id) {
     }
 
     else if (clicked_button.value == ICON_OPTIONS["false"][0]) {
-
-        console.log("currently not an icon...")
 
         clicked_button.innerHTML = ICON_OPTIONS["true"][1];
         clicked_button.value = ICON_OPTIONS["true"][0];

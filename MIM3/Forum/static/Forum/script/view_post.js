@@ -13,15 +13,15 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 })
 
-function toggle_volunteer(event_id) {
+function toggle_volunteer(this_button, event_id) {
 
     VOLUNTEER_OPTIONS = {
         "is_volunteer":['volunteered', 'You volunteered for this event. Click to leave.'],
         "not_volunteer":['not_volunteered', 'Volunteer for this event.'],
     }
 
-    clicked_button = document.getElementById(`event-${event_id}-btn`);
-    status_field = document.getElementById(`event-${event_id}-status`);
+    const clicked_button = this_button;
+    const status_field = document.getElementById(`event-${event_id}-status`);
 
     // if the user is already volunteered then change button and hidden inputs to that of a non-volunteer
     if (status_field.value == VOLUNTEER_OPTIONS['is_volunteer'][0]) {
@@ -37,21 +37,4 @@ function toggle_volunteer(event_id) {
         clicked_button.innerHTML = VOLUNTEER_OPTIONS['is_volunteer'][1];
         
     }
-
-
-    
-}
-
-// makes a PUT request to the server to change the status of the volunteer
-function fetch_and_toggle_bid(event_id, status, csrftoken) {
-
-    fetch(`${window.location.origin}/Forum/change_bids`, {
-    method: "PUT",
-    headers: {"X-CSRFToken":csrftoken },
-
-    body: JSON.stringify({
-        'event_id':event_id,
-        'status': status
-    })
-})
 }

@@ -641,7 +641,7 @@ def ChangeImgView(request, post_pk):
                     # if the image is being deleted
                     if data.get('delete') is not None:
 
-                        target_img[0].delete()
+                        target_img.delete()
                         return HttpResponse(status=204)
 
                     # if the image's icon status is being changed
@@ -667,7 +667,7 @@ def ChangeImgView(request, post_pk):
                 image.save()
 
             # takes you back to the editing view
-            return HttpResponseRedirect(reverse('manage_imgs', kwargs={'pk':current_post.pk}))
+            return HttpResponseRedirect(reverse('manage_imgs', kwargs={'post_pk':current_post.pk}))
 
     # if some other request was made to the view throw an error
     return(HttpResponseRedirect(reverse('error_view')))

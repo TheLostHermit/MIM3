@@ -6,7 +6,6 @@ Participants
 {% endblock %}
 
 {% block script %}
-    <script src = "{% static 'Forum/script/participant_list.js' %}"</script>
 {% endblock %}
 
 {% block body %}
@@ -18,7 +17,7 @@ Participants
         <!-- only display a submit button if the list has any values -->
         {% if bid_list %}
             <!-- button to copy the emails of the participants in this list -->
-            <button type="button" id="copy-emails-button" onclick = "copy_emails(this, '{{ mail_list }}')">Copy Emails for this List</button>
+            <button type="button" id="copy-emails-button" onclick = "copy_text(this, '{{ mail_list }}')">Copy Emails for this List</button>
             <input type="submit" value="Save Changes">
 
             <input type="hidden" value="{{ bid_ids }}" name="bid_ids">

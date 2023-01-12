@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block script %}
-<script src = "{% static 'Forum/script/org_details.js' %}"</script>
+    <script src = "{% static 'Forum/script/org_details.js' %}"></script>
 {% endblock %}
 
 {% block body %}
@@ -14,7 +14,7 @@
 
     {% csrf_token %}
     <input type="hidden" id="organization-id" value="{{ organization.pk }}">
-    <button type="button" id="toggle-pin-btn" value="{{ pinned }}">
+    <button type="button" id="toggle-pin-btn" onclick ="toggle_pin(this)" value="{{ pinned }}">
         {% if pinned %}
             Unpin
         {% else%}
@@ -27,8 +27,7 @@
 
     <!-- if the organization has an official email you can copy it here -->
     {% if organization.official_email %}
-        <input type="button" value="Copy Email" id="copy-email-btn">
-        <input type="hidden" value="{{ organization.official_email }}" id="organization-email">
+        <button type="button" onclick="copy_text(this, '{{organization.official_email}}')">Copy Email</button>
     {% endif %}
 
     {% if organization.logo %}
@@ -46,7 +45,7 @@
     <ul>
         {% for member in organization.members.all %}
 
-        <li>{{ member.first_name }} {{ member.last_name }}</li>
+        <li>{{ member.get_full_name }}</li>
 
         {% empty %}
 

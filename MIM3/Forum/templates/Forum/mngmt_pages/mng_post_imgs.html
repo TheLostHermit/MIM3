@@ -47,11 +47,11 @@
 
             {% if image.is_icon %}
 
-                <button type="button" id="toggle-img-{{image.pk}}-isicon" onclick="toggle_icon({{ image.pk }})" value="true">This image is an icon. Click to remove icon status</button>
+                <button type="button" id="toggle-img-{{image.pk}}-isicon" onclick="toggle_icon(this, {{ image.pk }})" value="true">This image is an icon. Click to remove icon status</button>
 
             {% else %}
 
-                <button type="button" id="toggle-img-{{image.pk}}-isicon" onclick="toggle_icon({{ image.pk }})" value="false">Make this image an icon</button>
+                <button type="button" id="toggle-img-{{image.pk}}-isicon" onclick="toggle_icon(this, {{ image.pk }})" value="false">Make this image an icon</button>
 
             {% endif %}
             <button type="button" id="delete-img-{{image.pk}}-btn" onclick="delete_image({{image.pk}})">Delete Image</button>
