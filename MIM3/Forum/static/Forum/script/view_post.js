@@ -42,15 +42,16 @@ function toggle_volunteer(event_id) {
     
 }
 
-/*
-    What I need to do:
-    When a button is clicked it will perform an onclick function with the parameters
-    'requested event id' and 'current status'
+// makes a PUT request to the server to change the status of the volunteer
+function fetch_and_toggle_bid(event_id, status, csrftoken) {
 
-    clicking the button will change the current status of both the button text and the hidden input
+    fetch(`${window.location.origin}/Forum/change_bids`, {
+    method: "PUT",
+    headers: {"X-CSRFToken":csrftoken },
 
-    When the form is submitted it will send a POST request to the view function responsible for 
-    managing the volunteer bids. 
-
-    It will read each bid with the 'name' attribute, and try to perform the prescribed action to it
-*/
+    body: JSON.stringify({
+        'event_id':event_id,
+        'status': status
+    })
+})
+}

@@ -89,7 +89,9 @@ class PostDetailsView(DetailView):
             # the returned queryset is checked against when it is checked whether a user has already
             # volunteered for a time slot
             post_events = Event.objects.filter(post=post, bids__bidder__pk=self.request.user.pk)               
-            context['post_events'] = post_events
+            context['chosen_events'] = post_events
+
+            context['post_event_ids'] = Event.objects.filter(post=post).values_list("pk", flat=True)
 
         return context
 
@@ -141,10 +143,17 @@ class DeleteYourBidView(DeleteView):
     model = Bid
 
     # overriding default template path
-    template_name = "Forum/util_pages/delete_bid.html"
+    template_name = "Forum/util_pages/delete_page.html"
 
     def get_success_url(self):
         return reverse('your_project_view')
+
+    # adds the delete message specific to this in the context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        message = f"Are you sure you want to leave {self.object.event.post.title} at {self.object.event.datetime()}? It will no longer appear in this feed and you will lose its messages."
+        context['message'] = message
+        return context
 
 # dashboard view gets all the projects/posts of an organization
 class ManagePostsView(ListView):
@@ -414,11 +423,9 @@ def ErrorView(request):
 
 def PermissionDeniedView(request):
     return render(request, "Forum/util_pages/error_page.html", {
-        "type":"permission_required"
+        "type":"permission required"
     })
 
-def TestView(request):
-    return(HttpResponseRedirect(reverse('permission_denied')))
 # function based views (for processing forms)
 
 # view for creating a new post
@@ -554,35 +561,39 @@ def ChangePinOrgView(request):
 def ProjectBidView(request):
 
     if request.method == "POST":
+
+        # get all the IDs from the event ID field in the form to update each event as required
+        event_list = re.findall(r'\d+',str(request.POST['post-event-ids']))
         
         # look at the data the form submitted and get the corresponding objects
-        target_event_id = request.POST["target-event"]
-        event_status = request.POST["event-status"]
+        for target_event_id in event_list:
+        
+            event_status = request.POST[f"event-{target_event_id}-status"]
 
-        if target_event_id is not None and event_status is not None:
+            if target_event_id is not None and event_status is not None:
 
-            current_profile = Profile.objects.get(pk=request.user.pk)
-            target_event = Event.objects.get(pk=target_event_id)
+                current_profile = Profile.objects.get(pk=request.user.pk)
+                target_event = Event.objects.get(pk=target_event_id)
 
-            matching_bids = Bid.objects.filter(event=target_event, bidder=current_profile)
+                matching_bids = Bid.objects.filter(event=target_event, bidder=current_profile)
 
-            if event_status == 'volunteered':
+                if event_status == 'volunteered':
 
-                # if the person is volunteering see if they have already volunteered on the server side               
-                if not matching_bids.exists():
+                    # if the person is volunteering see if they have already volunteered on the server side               
+                    if not matching_bids.exists():
 
-                    # if the person is a new volunteer create the bid
-                    new_bid = Bid.objects.create(event=target_event, bidder=current_profile)
-                    new_bid.save()
+                        # if the person is a new volunteer create the bid
+                        new_bid = Bid.objects.create(event=target_event, bidder=current_profile)
+                        new_bid.save()
 
-            elif event_status == "not_volunteered":
+                elif event_status == "not_volunteered":
 
-                # if the person is unvolunteering see if they never volunteered in the first place
-                if matching_bids.exists():          
-            
-                    # if the person is unvolunteering then find their bid instance and delete it
-                    matching_bids[0].delete()
-    
+                    # if the person is unvolunteering see if they never volunteered in the first place
+                    if matching_bids.exists():          
+                
+                        # if the person is unvolunteering then find their bid instance and delete it
+                        matching_bids[0].delete()
+        
         # redirect to the dashboard that deals with all your volunteers
         return (HttpResponseRedirect(reverse('your_project_view')))
 

@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-Error
+{{ type }}
 {% endblock %}
 
 {% block script %}
@@ -12,7 +12,7 @@ Error
 
     <!-- the page which renders when the site encounters an error-->
 
-    {% if type == "permission_required" %}
+    {% if type == "permission required" %}
         <h1>You do not have permission to perform this action...</h1>
         <a class="btn btn-primary" href="{% url 'login' %}">Sign into a different account</a>
 
