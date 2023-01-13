@@ -303,14 +303,15 @@ class VolunteerListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        mail_string = ""
-        bid_ids = []
-        bidder_ids = []
+        this_queryset = self.get_queryset()
+        emails = this_queryset.values_list("bidder__email", flat=True)
+        bid_ids = this_queryset.values_list("pk", flat=True)
 
-        for bid in self.get_queryset():
-            mail_string += (f"{bid.bidder.email}, ") 
-            bid_ids.append(bid.pk)
-            bidder_ids.append(bid.bidder.pk)
+        # creates a string from the emails of each bidder matching the query
+        mail_string = ""
+
+        for email in emails:
+            mail_string += (f"{email}, ") 
 
         # NB: there are probably better ways to pass the IDs of all elements
         # in the list view to other views
