@@ -13,10 +13,11 @@ urlpatterns = [
     path("error", views.ErrorView, name="error_view"),
     path("permission_denied", views.PermissionDeniedView, name="permission_denied"),
 
-    # paths dealing with user authentication
+    # paths dealing with user authentication and editing
     path("signup", views.signup, name="sign_up"),
     path("signout", views.signout, name="sign_out"),
     path("login", views.signin, name="login"),
+    path("edit_profile", views.ChangeProfileView, name="edit_profile"),
 
     # paths for dealing with creating/viewing posts
     path("newpost", views.newPost, name="create_post"),

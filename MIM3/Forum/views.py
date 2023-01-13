@@ -17,8 +17,7 @@ from django.http.response import JsonResponse
 import json
 
 # utility imports
-from datetime import date, time
-import re
+import re, pytz
 
 # importing models and forms from other files in this folder
 from .forms import * # models and property forms are imported through this as well
@@ -177,7 +176,7 @@ class DeletePostView(DeleteView):
     model = Post
 
     # overriding the default template path
-    template_name = "Forum/util_pages/delete_post.html"
+    template_name = "Forum/util_pages/delete_page.html"
 
     def get_success_url(self):
         return reverse('manage_posts_view')
@@ -863,6 +862,32 @@ def ChangeVolunteerView(request):
 
     # this should eventually become an error page
     return HttpResponseRedirect(reverse('index'))
+
+@login_required
+def ChangeProfileView(request):
+
+    current_profile = Profile.objects.get(pk=request.user.pk)
+    print(current_profile)
+    HTML_PAGE = "Forum/mngmt_pages/edit_profile_page.html"
+
+    if request.method == "POST":
+
+        request.session['django_timezone'] = request.POST['timezone']
+        profile_form = UpdateProfileForm(request.POST, instance=current_profile)
+
+        if profile_form.is_valid() and (len(profile_form.changed_data) != 0):
+
+            profile_form.save()
+        return HttpResponseRedirect(reverse('index'))
+        
+
+    elif request.method == "GET":
+        profile_form = UpdateProfileForm(instance=current_profile)
+
+    return render(request, HTML_PAGE, {
+        "form": UpdateProfileForm(instance=current_profile),
+        "timezones": pytz.common_timezones
+    })
 
 # sign up, sign in and sign out functions
 def signup(request):

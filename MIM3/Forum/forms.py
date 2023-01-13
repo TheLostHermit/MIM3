@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm, modelformset_factory
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import *
 
 # form used to create a new profile
@@ -65,3 +65,9 @@ class MessageForm(ModelForm):
         model = Message
         fields = ['content']
 
+class UpdateProfileForm(ModelForm):
+
+    class Meta:
+
+        model = Profile
+        fields = ['username','first_name', 'last_name', 'birthday', 'email', 'biography',]

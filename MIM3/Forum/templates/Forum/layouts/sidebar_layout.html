@@ -1,11 +1,11 @@
-<!-- loads static files -->
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 
     
     <head>
+
+        <!-- loads static files -->
+        {% load static %}
 
         <!-- title on tab -->
         <title>
@@ -35,16 +35,27 @@
 
     <body>
 
+        {% load tz %}
+        {% get_current_timezone as TIME_ZONE %}
+        
+
         <div id = "topbar">
             ||
             {% if user.is_authenticated %}
                 Signed in as {{ request.user.username }} ||
                 <a href="{% url 'sign_out' %}">Sign out</a> <br>
+                <a href="{% url 'edit_profile' %}">Edit profile</a> <br>
             {% else %}
             
             <a href="{% url 'login' %}">Sign in</a> ||
             <a href="{% url 'sign_up' %}">Sign up</a> ||
             {% endif %}
+
+            The current time is:
+            {% now "SHORT_DATETIME_FORMAT" %}
+            The current zone is:
+            {{ TIME_ZONE }}
+
         </div>
 
         <!-- Using Bootstrap's row and column classes temporarily until styling is done -->
@@ -77,8 +88,11 @@
             </div>
 
             <div id = "body" class = "col">
+
+                {% localtime on %}
                 {% block body %}
                 {% endblock %}
+                {% endlocaltime %}
 
                 <!-- Pagination code from django documentation -->
                 <div class="pagination">
@@ -101,6 +115,7 @@
                     </span>
                 </div>
             </div>         
-        </div>       
+        </div> 
+        
     </body>
 </html>
