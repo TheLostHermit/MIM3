@@ -66,8 +66,18 @@ class Post(models.Model):
 
                 if event.open:
 
-                    # %-I throws an error so currently leading 0 remains in the hour section
-                    EVENT_CHOICES.append((event.pk, f"{event.date.strftime('%d %B, %Y')} at {event.time.strftime('%I:%M %p')}"))
+                    # strftime formatting strings depend on system
+                    try:
+                        # for windows removing the leading 0 of a date is done using a '#'
+                        date_str = event.date.strftime('%#d %B, %Y')
+                        time_str = event.time.strftime('%#I:%M %p')
+
+                    except:
+                        # for linux based systems removing the leading 0 is done using a '-'
+                        date_str = event.date.strftime('%-d %B, %Y')
+                        time_str = event.time.strftime('%-I:%M %p')
+                    
+                    EVENT_CHOICES.append((event.pk, f"{date_str} at {time_str}"))
 
             # technically the form works without the prefix but it results in multiple forms with the same ID
             return VolunteerSearchForm(EVENT_CHOICES, prefix=self.pk)
@@ -93,7 +103,19 @@ class Event(models.Model):
     # property which returns the formatted date and time of an event at once
     @property
     def datetime(self):
-        return f"{self.date.strftime('%d %B, %Y')} at {self.time.strftime('%I:%M %p')}"
+
+        # strftime formatting strings depend on system
+        try:
+            # for windows removing the leading 0 of a date is done using a '#'
+            date_str = self.date.strftime('%#d %B, %Y')
+            time_str = self.time.strftime('%#I:%M %p')
+
+        except:
+            # for linux based systems removing the leading 0 is done using a '-'
+            date_str = self.date.strftime('%-d %B, %Y')
+            time_str = self.time.strftime('%-I:%M %p')
+
+        return f"{date_str} at {time_str}"
 
     def __str__(self):
         return f"Event from {self.post.title}"
