@@ -21,7 +21,7 @@ import re, pytz
 
 # importing models and forms from other files in this folder
 from .forms import * # models and property forms are imported through this as well
-
+from .utils import apply_tz_offset
 # the number of list items to display before pagination is controlled by this global variable
 PAGINATE_NO = 5
 
@@ -243,7 +243,7 @@ class ManageEventsView(ListView):
         # lists all the events of the post in question
         queryset = super(ManageEventsView, self).get_queryset(*args, **kwargs)
         current_post = Post.objects.get(pk=self.kwargs['post_pk'])
-        return queryset.filter(post=current_post)
+        return queryset.filter(post=current_post).order_by('date')
 
     # uses the event form for all instances where the event is created or changed
     def get_context_data(self, **kwargs):
@@ -496,6 +496,12 @@ def newPost(request):
                     for form in event_form:
 
                         event = form.save(commit=False)
+
+                        # implementing timezone offsets
+                        std_datetime = apply_tz_offset(form.cleaned_data['date'], form.cleaned_data['time'])
+
+                        event.date = std_datetime.date()
+                        event.time = std_datetime.time()
                         event.post = new_post
 
                         if event.date < timezone.now().date():event.open = False
@@ -708,8 +714,10 @@ def ChangeEventView(request):
                     # if the input to the form is valid save the changes to the event and reload the page
                     if event_form.is_valid():
 
-                        target_event.date = event_form.cleaned_data['date']
-                        target_event.time = event_form.cleaned_data['time']
+                        std_datetime = apply_tz_offset(event_form.cleaned_data['date'], event_form.cleaned_data['time'])
+
+                        target_event.date = std_datetime.date()
+                        target_event.time = std_datetime.time()
                         target_event.save()
 
             # if the event is being created there will be no ID for the event
@@ -718,6 +726,9 @@ def ChangeEventView(request):
                 if event_form.is_valid():
 
                     new_event = event_form.save(commit=False)
+                    std_datetime = apply_tz_offset(event_form.cleaned_data['date'], event_form.cleaned_data['time'])
+                    new_event.date = std_datetime.date()
+                    new_event.time = std_datetime.time()
                     new_event.post = target_post
                     new_event.save()
 

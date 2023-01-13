@@ -4,6 +4,7 @@ import pytz
 from django.utils import timezone
 from django.template.defaultfilters import date as format_date
 from django.template.defaultfilters import time as format_time
+from datetime import datetime
 
 # imports for deleting files from the media folder completely when an object is deleted or changed
 from django.db.models.signals import post_delete
@@ -103,13 +104,11 @@ class Event(models.Model):
     @property
     def datetime(self):
 
-        timezone.activate(timezone.get_current_timezone())
-
         # using Django's built in date formatting tools
-        aware_time = pytz.utc.localize(self.time)
-        print(timezone.localtime(aware_time))
-        date_str = format_date(self.date, "j N Y")
-        time_str = format_time(pytz.utc.localize(self.time), 'g:i O') 
+        this_datetime = datetime.combine(self.date, self.time, timezone.utc)
+        local_time = this_datetime.astimezone(timezone.get_current_timezone())
+        date_str = format_date(local_time.date(), "j N Y")
+        time_str = format_time(local_time.time(), 'g:i a') 
 
         return f"{date_str} at {time_str}"
 
