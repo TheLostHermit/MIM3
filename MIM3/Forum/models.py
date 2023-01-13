@@ -4,6 +4,10 @@ from django.utils import timezone
 from django.template.defaultfilters import date as format_date
 from django.template.defaultfilters import time as format_time
 
+# imports for deleting files from the media folder completely when an object is deleted or changed
+from django.db.models.signals import post_delete
+from .utils import file_cleanup
+
 # validators
 from django.core.validators import MinValueValidator
 
@@ -153,3 +157,12 @@ class Bid(models.Model):
 
     def __str__(self):
         return f"{self.bidder.username}'s bid on {self.event.post.title}"
+
+# deleting old media files from object when the object is deleted (file cleanup)
+post_delete.connect(
+    file_cleanup, sender=PostImage, dispatch_uid="media.post_images.file_cleanup"
+)
+
+post_delete.connect(
+    file_cleanup, sender=Organization, dispatch_uid="media.organization_logos.file_cleanup"
+)
