@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.template.defaultfilters import date as format_date
+from django.template.defaultfilters import time as format_time
 
 # validators
 from django.core.validators import MinValueValidator
@@ -66,17 +68,9 @@ class Post(models.Model):
 
                 if event.open:
 
-                    # strftime formatting strings depend on system
-                    try:
-                        # for windows removing the leading 0 of a date is done using a '#'
-                        date_str = event.date.strftime('%#d %B, %Y')
-                        time_str = event.time.strftime('%#I:%M %p')
-
-                    except:
-                        # for linux based systems removing the leading 0 is done using a '-'
-                        date_str = event.date.strftime('%-d %B, %Y')
-                        time_str = event.time.strftime('%-I:%M %p')
-                    
+                    # using Django's built in date formatting tools
+                    date_str = format_date(event.date, "j N Y")
+                    time_str = format_time(event.time, 'g:i a')                    
                     EVENT_CHOICES.append((event.pk, f"{date_str} at {time_str}"))
 
             # technically the form works without the prefix but it results in multiple forms with the same ID
@@ -104,16 +98,9 @@ class Event(models.Model):
     @property
     def datetime(self):
 
-        # strftime formatting strings depend on system
-        try:
-            # for windows removing the leading 0 of a date is done using a '#'
-            date_str = self.date.strftime('%#d %B, %Y')
-            time_str = self.time.strftime('%#I:%M %p')
-
-        except:
-            # for linux based systems removing the leading 0 is done using a '-'
-            date_str = self.date.strftime('%-d %B, %Y')
-            time_str = self.time.strftime('%-I:%M %p')
+        # using Django's built in date formatting tools
+        date_str = format_date(self.date, "j N Y")
+        time_str = format_time(self.time, 'g:i a') 
 
         return f"{date_str} at {time_str}"
 
