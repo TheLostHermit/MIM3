@@ -1,5 +1,6 @@
 {% extends "Forum/layouts/sidebar_layout.html" %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block title %}
 {{ post.title }}
@@ -12,9 +13,9 @@
 
     <h1> Changing Post "{{ post.title }}"</h1>
 
-    <form method="post">
+    <form "form-control mb-3" method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form|crispy }}
 
         <input type="submit" value="Save Changes">
     </form>

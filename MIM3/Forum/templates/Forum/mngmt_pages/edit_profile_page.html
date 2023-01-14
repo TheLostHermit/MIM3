@@ -14,7 +14,7 @@ Edit Profile
     <h1>Edit your Profile</h1>
 
     <!-- Posts to edit profile area-->
-    <form method="post" action="{% url 'edit_profile' %}">
+    <form method="post" class="form-control mb-3" action="{% url 'edit_profile' %}">
         {% csrf_token %}
 
         <!-- form to change timezones. Can be styled here -->

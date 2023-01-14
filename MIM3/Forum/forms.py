@@ -5,7 +5,7 @@ from .models import *
 
 # making forms crispy
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Div, Field, Submit,MultiWidgetField, Fieldset
+from crispy_forms.layout import Layout, Div, Field, Submit,MultiWidgetField, Fieldset, MultiField
 
 # form used to create a new profile
 class NewProfileForm(UserCreationForm):
@@ -47,6 +47,9 @@ class NewProfileForm(UserCreationForm):
             Field('password2', css_class='form-control')
         )
 
+        self.helper.form_tag = False
+        self.helper.disable_csrf = True
+
         self.helper.add_input(Submit('Create Account', 'Create Account') )
 # form to create a new post or project
 class NewPostForm(ModelForm):
@@ -78,6 +81,23 @@ class EventForm(ModelForm):
         model = Event
         fields = ['date', 'time']
         error_messages = {"min_value" : "This date must not be in the past"}
+
+    def __init__(self, *args, **kwargs):
+        super(EventForm, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper(self)
+        self.helper.label_class = 'form-label'
+        self.helper.layout = Layout(
+            
+            MultiWidgetField('date', attrs=({'style': 'width: 33%; display: inline-block;'})),
+            Field('time', css_class='form-control'),   
+        )
+
+        #self.helper[0:3].wrap(Div, css_class="input-group")
+
+        self.helper.form_tag = False
+        self.helper.disable_csrf = True
+    
         
 EventFormset = modelformset_factory(
     Event, EventForm

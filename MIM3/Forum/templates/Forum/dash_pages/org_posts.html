@@ -1,4 +1,5 @@
 {% extends "Forum/layouts/sidebar_layout.html" %}
+{% load crispy_forms_tags %}
 
 {% block title %}
 Post Dashboard
@@ -33,15 +34,31 @@ Post Dashboard
         <div>
             {% if post.is_project %}
 
-            <form method="post">
+            <form method="post" class="form-control mb-3">
                 {% csrf_token %}
-                {{ post.get_volunteer_search_form }}
-
                 <input type="hidden" name="post_id" value="{{post.pk}}">
-
                 <!-- the user can either send a message to a group or see the list of people in it -->
-                <input type="submit" formaction="{% url 'manage_volunteers' action='list'  %}" value="search">
-                <input type="submit" formaction="{% url 'manage_volunteers' action='message'  %}" value="Send Message">
+                <div class="row">
+
+                    <div class="col">
+                        {% crispy post.get_volunteer_search_form post.get_volunteer_search_form.helper %}
+
+                    </div>
+
+                    <div class="col">
+                        <input type="submit" formaction="{% url 'manage_volunteers' action='list'  %}" value="search">
+                        <input type="submit" formaction="{% url 'manage_volunteers' action='message'  %}" value="Send Message">
+
+                    </div>
+
+                </div>
+                
+                
+                
+
+                
+
+                
 
             </form>
 

@@ -1,5 +1,6 @@
 {% extends "Forum/layouts/sidebar_layout.html" %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block title %}
 {{ post.title }}
@@ -15,9 +16,9 @@
     <!-- A form to create a new image -->
 
     <div>
-        <form action="{% url 'change_imgs' post_pk=post_pk %}" method="post" enctype="multipart/form-data">
+        <form class="form-control mb-3" action="{% url 'change_imgs' post_pk=post_pk %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ image_form }}
+            {{ image_form|crispy }}
 
             <input type="submit" value="add image">
 

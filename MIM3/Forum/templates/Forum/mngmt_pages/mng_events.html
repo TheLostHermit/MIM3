@@ -1,5 +1,6 @@
 {% extends "Forum/layouts/sidebar_layout.html" %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block title %}
 {{ post.title }}
@@ -15,13 +16,24 @@
     <!-- A form to create a new event -->
 
     <div>
-        <form action="{% url 'change_event' %}" method="post">
+        <form class="form-control mb-3" action="{% url 'change_event' %}" method="post">
             {% csrf_token %}
-            {{ event_form }}
+
+            <div class="row">
+                <div class="col col-9">
+                    {% crispy event_form event_form.helper %}
+                </div>
+
+                <div class="col">
+                    <input type="submit" value="add event">
+                </div>
+
+            </div>
+            
 
             <input type="hidden" name="post-id" id="post-id-input" value={{ post_pk }}>
 
-            <input type="submit" value="add event">
+            
 
         </form>
     </div>
@@ -77,12 +89,12 @@
                 <div id="event-{{event.pk}}-change-div" style="display:None">                    
 
                     <!-- sends a POST request to the change event url -->
-                    <form action="{% url 'change_event' %}" method="post">
+                    <form class="form-control mb-3" action="{% url 'change_event' %}" method="post">
                         <input type="hidden" name="post-id" id="post-id-input" value={{ post_pk }}>
                         <input type="hidden" name="event-id" value="{{event.pk}}">
                         {% csrf_token %}
-                        {{ event_form }}
-
+                        {% crispy event_form %}
+                        <br>
                     <button type="submit">Make Changes</button>     
                     </form>               
 

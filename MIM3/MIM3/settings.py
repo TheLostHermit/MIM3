@@ -43,7 +43,14 @@ INSTALLED_APPS = [
     'crispy_forms',
 ]
 
-CRISPY_CLASS_CONVERTERS = {'textinput': "form-control"}
+CRISPY_CLASS_CONVERTERS = {
+    'textinput': "form-control",
+    'select' : 'form-control',
+    'selectdatewidget':'form-control',
+    'clearablefileinput':'form-control',
+    'textarea':'form-control',
+    
+    }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
