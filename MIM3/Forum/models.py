@@ -1,8 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
+import pytz
 from django.utils import timezone
 from django.template.defaultfilters import date as format_date
 from django.template.defaultfilters import time as format_time
+from datetime import datetime
 
 # imports for deleting files from the media folder completely when an object is deleted or changed
 from django.db.models.signals import post_delete
@@ -47,7 +49,7 @@ class Profile(User):
 class Post(models.Model):
     title = models.CharField(max_length=150)
     body = models.TextField(null=False, blank=False)
-    timestamp = models.DateTimeField(default = timezone.now, blank=True, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     is_project = models.BooleanField(default=False, null=False, blank=False, verbose_name="Make this a project")
 
     # organization will be pulled from the author of the post naturally
@@ -103,8 +105,10 @@ class Event(models.Model):
     def datetime(self):
 
         # using Django's built in date formatting tools
-        date_str = format_date(self.date, "j N Y")
-        time_str = format_time(self.time, 'g:i a') 
+        this_datetime = datetime.combine(self.date, self.time, timezone.utc)
+        local_time = this_datetime.astimezone(timezone.get_current_timezone())
+        date_str = format_date(local_time.date(), "j N Y")
+        time_str = format_time(local_time.time(), 'g:i a') 
 
         return f"{date_str} at {time_str}"
 
@@ -130,7 +134,7 @@ class Message(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, null=True, blank=True, related_name="messages")
     sending_org = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True, related_name="sent_messages")
     recipient = models.ManyToManyField(Profile, related_name='received_messages')
-    timestamp = models.DateTimeField(default=timezone.now, blank=True, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
     def __str__(self):
         timestring = self.timestamp.strftime("%d/%m/%Y | %H : %M")

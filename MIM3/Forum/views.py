@@ -17,12 +17,11 @@ from django.http.response import JsonResponse
 import json
 
 # utility imports
-from datetime import date, time
-import re
+import re, pytz
 
 # importing models and forms from other files in this folder
 from .forms import * # models and property forms are imported through this as well
-
+from .utils import apply_tz_offset
 # the number of list items to display before pagination is controlled by this global variable
 PAGINATE_NO = 5
 
@@ -177,7 +176,7 @@ class DeletePostView(DeleteView):
     model = Post
 
     # overriding the default template path
-    template_name = "Forum/util_pages/delete_post.html"
+    template_name = "Forum/util_pages/delete_page.html"
 
     def get_success_url(self):
         return reverse('manage_posts_view')
@@ -244,7 +243,7 @@ class ManageEventsView(ListView):
         # lists all the events of the post in question
         queryset = super(ManageEventsView, self).get_queryset(*args, **kwargs)
         current_post = Post.objects.get(pk=self.kwargs['post_pk'])
-        return queryset.filter(post=current_post)
+        return queryset.filter(post=current_post).order_by('date')
 
     # uses the event form for all instances where the event is created or changed
     def get_context_data(self, **kwargs):
@@ -496,12 +495,13 @@ def newPost(request):
 
                     for form in event_form:
 
-                        event = form.save(commit=False)
-                        event.post = new_post
+                        # implementing timezone offsets
+                        std_datetime = apply_tz_offset(form.cleaned_data['date'], form.cleaned_data['time'])
+                        new_event = Event.objects.create(date=std_datetime.date(), time=std_datetime.time(), post=new_post)
 
-                        if event.date < timezone.now().date():event.open = False
+                        if new_event.date < timezone.now().date():new_event.open = False
                         
-                        event.save()
+                        new_event.save()
             
             return (HttpResponseRedirect(reverse('index')))
 
@@ -709,17 +709,19 @@ def ChangeEventView(request):
                     # if the input to the form is valid save the changes to the event and reload the page
                     if event_form.is_valid():
 
-                        target_event.date = event_form.cleaned_data['date']
-                        target_event.time = event_form.cleaned_data['time']
+                        std_datetime = apply_tz_offset(event_form.cleaned_data['date'], event_form.cleaned_data['time'])
+
+                        target_event.date = std_datetime.date()
+                        target_event.time = std_datetime.time()
                         target_event.save()
 
             # if the event is being created there will be no ID for the event
             else:
-
+                
                 if event_form.is_valid():
 
-                    new_event = event_form.save(commit=False)
-                    new_event.post = target_post
+                    std_datetime = apply_tz_offset(event_form.cleaned_data['date'], event_form.cleaned_data['time'])
+                    new_event = Event.objects.create(date=std_datetime.date(), time=std_datetime.time(), post=target_post)
                     new_event.save()
 
                     # if this post is not yet a project then make it so
@@ -863,6 +865,31 @@ def ChangeVolunteerView(request):
 
     # this should eventually become an error page
     return HttpResponseRedirect(reverse('index'))
+
+@login_required
+def ChangeProfileView(request):
+
+    current_profile = Profile.objects.get(pk=request.user.pk)
+    HTML_PAGE = "Forum/mngmt_pages/edit_profile_page.html"
+
+    if request.method == "POST":
+
+        request.session['django_timezone'] = request.POST['timezone']
+        profile_form = UpdateProfileForm(request.POST, instance=current_profile)
+
+        if profile_form.is_valid() and (len(profile_form.changed_data) != 0):
+
+            profile_form.save()
+        return HttpResponseRedirect(reverse('index'))
+        
+
+    elif request.method == "GET":
+        profile_form = UpdateProfileForm(instance=current_profile)
+
+    return render(request, HTML_PAGE, {
+        "form": UpdateProfileForm(instance=current_profile),
+        "timezones": pytz.common_timezones
+    })
 
 # sign up, sign in and sign out functions
 def signup(request):

@@ -48,6 +48,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # middleware for time zone setting
+    'Forum.middleware.TimezoneMiddleware',
 ]
 
 ROOT_URLCONF = 'MIM3.urls'
@@ -106,7 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'America/Port_of_Spain'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 

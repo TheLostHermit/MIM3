@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm, modelformset_factory
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import *
 
 # form used to create a new profile
@@ -43,17 +43,15 @@ ImageFormset = modelformset_factory(
 # form to add a variable number of events to a project
 class EventForm(ModelForm):
 
+    date= forms.DateField(localize=True, initial=timezone.now(), widget=forms.SelectDateWidget(years=range(timezone.now().year, timezone.now().year + 10)),)
+    time= forms.TimeField(localize=True, initial=timezone.now(),widget=forms.TimeInput(format='%H:%M'))
+
     class Meta:
 
         model = Event
         fields = ['date', 'time']
-
-        widgets = {
-        "date" : forms.SelectDateWidget(years=range(timezone.now().year, timezone.now().year + 10)),
-        "time" : forms.TimeInput(format='%H:%M'),
-        }
-
         error_messages = {"min_value" : "This date must not be in the past"}
+        
 EventFormset = modelformset_factory(
     Event, EventForm
 )
@@ -65,3 +63,9 @@ class MessageForm(ModelForm):
         model = Message
         fields = ['content']
 
+class UpdateProfileForm(ModelForm):
+
+    class Meta:
+
+        model = Profile
+        fields = ['username','first_name', 'last_name', 'birthday', 'email', 'biography',]
