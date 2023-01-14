@@ -1,4 +1,5 @@
 {% extends "Forum/layouts/nonsidebar_layout.html" %}
+{% load crispy_forms_tags %}
 
 {% block title %}
 Sign up
@@ -9,10 +10,10 @@ Sign up
 
 {% block body %}
     <h1> Sign up for an account </h1>
-    <form action="{% url 'sign_up' %}" method="post">
+    <form class="form-control mb-3" action="{% url 'sign_up' %}" method="post">
         {% csrf_token %}
-        {{ form }}
-        <input type="submit">
+        {% crispy form form.helper %}
+        
     </form>
 
     <br>

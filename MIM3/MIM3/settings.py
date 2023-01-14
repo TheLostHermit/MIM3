@@ -38,7 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # crispy forms for automatically styling Django forms with Bootstrap
+    'crispy_forms',
 ]
+
+CRISPY_CLASS_CONVERTERS = {'textinput': "form-control"}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

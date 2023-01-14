@@ -1,7 +1,11 @@
 from django import forms
 from django.forms import ModelForm, modelformset_factory
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import UserCreationForm
 from .models import *
+
+# making forms crispy
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Div, Field, Submit,MultiWidgetField, Fieldset
 
 # form used to create a new profile
 class NewProfileForm(UserCreationForm):
@@ -10,17 +14,40 @@ class NewProfileForm(UserCreationForm):
         model = Profile
         fields = ['first_name', 'last_name', 'username', 'birthday', 'email', 'biography', 'password1', 'password2']
 
+        THIS_YEAR = timezone.now().year
+
         widgets = {
-            "first_name": forms.TextInput(attrs={'class':'form_control'}),
-            "last_name" : forms.TextInput(attrs={'class':'form_control'}),
-            "username" : forms.TextInput(attrs={'class':'form_control'}),
-            "email" : forms.EmailInput(attrs={'class':'form_control'}),
-            "birthday" : forms.SelectDateWidget(attrs={'class':'form_control'}, years=reversed(range(1900, timezone.now().year))),
-            "biography" : forms.TextInput(attrs={'class':'form_control'}),
-            "password1" : forms.PasswordInput(attrs={'class':'form_control'}),
-            "password2" : forms.PasswordInput(attrs={'class':'form_control'})            
+            "email" : forms.EmailInput(attrs={'class':'form-control'}),
+            "birthday" : forms.SelectDateWidget(attrs={'class':'form-control'}, years=reversed(range(1900, THIS_YEAR))),
+            "biography" : forms.Textarea(attrs={'class':'form-control'}),
+            "password1" : forms.PasswordInput(attrs={'class':'form-control'}),
+            "password2" : forms.PasswordInput(attrs={'class':'form-control'})            
         }
 
+    def __init__(self, *args, **kwargs):
+        super(NewProfileForm, self).__init__(*args, **kwargs)
+
+        # for some reason if you reload the form the widget clears teh selection field
+        self.fields['birthday'].widget.years = reversed(range(1900, timezone.now().year))
+
+        self.helper = FormHelper(self)
+        self.helper.label_class = 'form-label'
+        self.helper.layout = Layout(
+
+            Field('username', css_class="form-control mt-2 mb-3"),
+            Fieldset(
+                'Enter your name',
+                Div('first_name', 'last_name', css_class='input-group')
+            ),
+            
+            MultiWidgetField('birthday', attrs=({'style': 'width: 33%; display: inline-block;'})),
+            Field('email'),
+            Field('biography'),
+            Field('password1', css_class='form-control'),
+            Field('password2', css_class='form-control')
+        )
+
+        self.helper.add_input(Submit('Create Account', 'Create Account') )
 # form to create a new post or project
 class NewPostForm(ModelForm):
 
