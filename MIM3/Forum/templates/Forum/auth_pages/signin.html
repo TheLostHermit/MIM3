@@ -9,6 +9,8 @@ Sign In
 
 {% block body %}
     <h1> Sign into an account </h1>
+
+    <!-- all of this is front end styling -->
     <form action="{% url 'login' %}" method="post">
         {% csrf_token %}
         <input type="text", name="username", placeholder="Type your username...">

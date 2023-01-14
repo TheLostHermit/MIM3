@@ -27,7 +27,7 @@ class NewProfileForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super(NewProfileForm, self).__init__(*args, **kwargs)
 
-        # for some reason if you reload the form the widget clears teh selection field
+        # for some reason if you reload the form the widget clears this selection field
         self.fields['birthday'].widget.years = reversed(range(1900, timezone.now().year))
 
         self.helper = FormHelper(self)
@@ -96,3 +96,32 @@ class UpdateProfileForm(ModelForm):
 
         model = Profile
         fields = ['username','first_name', 'last_name', 'birthday', 'email', 'biography',]
+
+        widgets = {
+            "email" : forms.EmailInput(attrs={'class':'form-control'}),
+            "birthday" : forms.SelectDateWidget(attrs={'class':'form-control'}, years=reversed(range(1900, timezone.now().year))),
+            "biography" : forms.Textarea(attrs={'class':'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(UpdateProfileForm, self).__init__(*args, **kwargs)
+
+        # for some reason if you reload the form the widget clears this selection field
+        self.fields['birthday'].widget.years = reversed(range(1900, timezone.now().year))
+
+        self.helper = FormHelper(self)
+        self.helper.label_class = 'form-label'
+        self.helper.layout = Layout(
+
+            Field('username', css_class="form-control mt-2 mb-3"),
+            Fieldset(
+                'Your Name',
+                Div('first_name', 'last_name', css_class='input-group')
+            ),
+            
+            MultiWidgetField('birthday', attrs=({'style': 'width: 33%; display: inline-block;'})),
+            Field('email'),
+            Field('biography'),
+        )
+
+        self.helper.add_input(Submit('Change Account', 'Change Account') )
