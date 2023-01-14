@@ -1,11 +1,13 @@
 {% extends "Forum/layouts/sidebar_layout.html" %}
 {% load crispy_forms_tags %}
+{% load static %}
 
 {% block title %}
 Post Dashboard
 {% endblock %}
 
 {% block script %}
+<script src = "{% static 'Forum/script/org_posts.js' %}"></script>
 {% endblock %}
 
 {% block body %}
@@ -31,13 +33,18 @@ Post Dashboard
             {% endif %}
         </a>
 
-        <div>
-            {% if post.is_project %}
+        {% if post.is_project %}
+        <button type="button" class="btn btn-primary" onclick="toggle_form(this, {{post.pk}})" value="Hidden">Manage Volunteers</button>
+        <div id="post-{{post.pk}}-form-div" style="display:none">
 
+            <br>
+     
             <form method="post" class="form-control mb-3">
                 {% csrf_token %}
                 <input type="hidden" name="post_id" value="{{post.pk}}">
                 <!-- the user can either send a message to a group or see the list of people in it -->
+
+                <!-- because i can't put the submit buttons in line with the form I used the generic row/column approach-->
                 <div class="row">
 
                     <div class="col">
@@ -62,8 +69,9 @@ Post Dashboard
 
             </form>
 
-            {% endif %}
+            
         </div>
+        {% endif %}
 
 
         <hr>
