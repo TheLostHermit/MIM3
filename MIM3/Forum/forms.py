@@ -43,17 +43,15 @@ ImageFormset = modelformset_factory(
 # form to add a variable number of events to a project
 class EventForm(ModelForm):
 
+    date= forms.DateField(localize=True, initial=timezone.now(), widget=forms.SelectDateWidget(years=range(timezone.now().year, timezone.now().year + 10)),)
+    time= forms.TimeField(localize=True, initial=timezone.now(),widget=forms.TimeInput(format='%H:%M'))
+
     class Meta:
 
         model = Event
         fields = ['date', 'time']
-
-        widgets = {
-        "date" : forms.SelectDateWidget(years=range(timezone.now().year, timezone.now().year + 10)),
-        "time" : forms.TimeInput(format='%H:%M'),
-        }
-
         error_messages = {"min_value" : "This date must not be in the past"}
+        
 EventFormset = modelformset_factory(
     Event, EventForm
 )

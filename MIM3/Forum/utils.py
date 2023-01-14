@@ -42,8 +42,7 @@ def apply_tz_offset(date, time):
     # for some reason there is discrepancy between this time converted to UTC and the inputted time
     # (eg: time inputted from Americas/St. Lucia gets 24 minutes added to it). This might be part of daylight savings
     if date and time:
-        this_datetime = datetime.combine(date, time, timezone.get_current_timezone())
-        print(this_datetime.date(), this_datetime.time())
+        this_datetime = datetime.combine(date, time)
         std_time = this_datetime.astimezone(tz.utc)
         print(std_time.date(), std_time.time())
         return std_time

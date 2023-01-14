@@ -495,18 +495,13 @@ def newPost(request):
 
                     for form in event_form:
 
-                        event = form.save(commit=False)
-
                         # implementing timezone offsets
                         std_datetime = apply_tz_offset(form.cleaned_data['date'], form.cleaned_data['time'])
+                        new_event = Event.objects.create(date=std_datetime.date(), time=std_datetime.time(), post=new_post)
 
-                        event.date = std_datetime.date()
-                        event.time = std_datetime.time()
-                        event.post = new_post
-
-                        if event.date < timezone.now().date():event.open = False
+                        if new_event.date < timezone.now().date():new_event.open = False
                         
-                        event.save()
+                        new_event.save()
             
             return (HttpResponseRedirect(reverse('index')))
 
@@ -723,13 +718,12 @@ def ChangeEventView(request):
             # if the event is being created there will be no ID for the event
             else:
 
+                
+
                 if event_form.is_valid():
 
-                    new_event = event_form.save(commit=False)
                     std_datetime = apply_tz_offset(event_form.cleaned_data['date'], event_form.cleaned_data['time'])
-                    new_event.date = std_datetime.date()
-                    new_event.time = std_datetime.time()
-                    new_event.post = target_post
+                    new_event = Event.objects.create(date=std_datetime.date(), time=std_datetime.time(), post=target_post)
                     new_event.save()
 
                     # if this post is not yet a project then make it so
@@ -878,7 +872,6 @@ def ChangeVolunteerView(request):
 def ChangeProfileView(request):
 
     current_profile = Profile.objects.get(pk=request.user.pk)
-    print(current_profile)
     HTML_PAGE = "Forum/mngmt_pages/edit_profile_page.html"
 
     if request.method == "POST":
