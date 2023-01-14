@@ -19,8 +19,9 @@ Received Messages
 
             <p> 
                 Sent by: {{ message.sender.get_full_name }} ({{ message.sender.username }})
+                Of organization {{ message.sender.membership }}
                  at {{ message.timestamp }}
-                For {{ message.event.project.title }} ({{ message.event.datetime }})
+                For {{ message.event.post.title }} ({{ message.event.datetime }})
             </p>
 
             Contents:
