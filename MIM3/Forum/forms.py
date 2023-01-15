@@ -5,7 +5,7 @@ from .models import *
 
 # making forms crispy
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Div, Field, Submit,MultiWidgetField, Fieldset, MultiField
+from crispy_forms.layout import Layout, Div, Field, Submit,MultiWidgetField, Fieldset, Button
 
 # form used to create a new profile
 class NewProfileForm(UserCreationForm):

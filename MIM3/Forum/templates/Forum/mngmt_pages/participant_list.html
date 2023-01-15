@@ -1,5 +1,6 @@
 {% extends "Forum/layouts/sidebar_layout.html" %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block title %}
 Participants
@@ -19,19 +20,28 @@ Participants
 
             <!-- button to copy the emails of the participants in this list -->
             <button type="button" id="copy-emails-button" onclick = "copy_text(this, '{{ mail_list }}')">Copy Emails for this List</button>
+           
+            <!-- button to save changes to the list -->
             <input type="submit" value="Save Changes">
 
             <input type="hidden" value="{{ bid_ids }}" name="bid_ids">
         {% endif %}
 
 
+        <!-- for every item in the list -->
         {% for bid in bid_list %}
 
+        <!-- the div with the item. Do not change ID -->
         <div id="bid-{{ bid.pk }}-div">
+
+            <!-- the name of the person -->
             <h1>{{ bid.bidder.get_full_name }}</h1>
+
+            <!-- an HREF with their username that opens a new tab with their profile-->
             <a href="{% url 'profile_view' pk=bid.bidder.pk %}" target="_blank" rel="noopener noreferrer">{{ bid.bidder.username}}</a> <br>
 
-            {{ bid.get_status_form }}
+            <!-- the radio form to change their status -->
+            {{ bid.get_status_form|crispy }}
 
         </div>
 

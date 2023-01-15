@@ -39,31 +39,42 @@
         {% load tz %}
         {% get_current_timezone as TIME_ZONE %}
         
-
+        <!-- all the things that appear in the top of the document appear here -->
         <div id = "topbar">
-            ||
+            
+            <!-- if the user is logged in these links/messages show -->
             {% if user.is_authenticated %}
-                Signed in as {{ request.user.username }} ||
+                Signed in as {{ request.user.username }}
                 <a href="{% url 'sign_out' %}">Sign out</a> <br>
                 <a href="{% url 'edit_profile' %}">Edit profile</a> <br>
             {% else %}
             
+            <!-- if the user is not logged in these links show -->
             <a href="{% url 'login' %}">Sign in</a> ||
             <a href="{% url 'sign_up' %}">Sign up</a> ||
             {% endif %}
 
+            <!-- the current time in the specific timezone is shown here -->
             The current time is:
             {% now "SHORT_DATETIME_FORMAT" %}
             The current zone is:
             {{ TIME_ZONE }}
 
+            <!-- end of the top bar -->
         </div>
 
         <!-- Using Bootstrap's row and column classes temporarily until styling is done -->
         <div class="container container-fluid">
+
+        <!-- when using the sidebar the row/column dynamic won't be needed anymore because the sidebar
+        will already be on the side -->
         <div class = "row">
+
+            <!-- div with all the links that appear in the sidebar-->
             <div id ="sidebar" class = "col-3">
 
+                <!-- whether or not the user is logged in they can go to the home page
+                (you can make this link the organization logo)-->
                 <a href="{% url 'index' %}">Home</a> <br>
 
                 <!-- links that only appear to logged in users-->
@@ -74,7 +85,7 @@
                     <a href="{% url 'profile_view' pk=user.pk %}">See your profile</a> <br>
                     <a href="{% url 'received_messages' %}">Received Messages</a> <br>
 
-                    <!-- links that appear to members of an organization -->
+                    <!-- links that only appear to members of an organization -->
                     {% if perms.Forum.can_post %}
 
                         <a href="{% url 'create_post' %}">Create a post</a> <br>
@@ -85,17 +96,21 @@
 
                 {% endif %}
                 
-                
+            <!-- end of the side bar div -->    
             </div>
 
+            <!-- div with all the information to the right of the page -->
             <div id = "body" class = "col">
 
+                <!--- start of content to the right of the sidebar -->
                 {% localtime on %}
                 {% block body %}
                 {% endblock %}
                 {% endlocaltime %}
+                <!-- end of content to the right of the sidebar -->
 
-                <!-- Pagination code from django documentation -->
+                <!-- Pagination code from django documentation is used to go through pages using the 
+                buttons at the bottom of the page -->
                 <div class="pagination">
                     <span class="step-links">
                         {% if page_obj.has_previous %}

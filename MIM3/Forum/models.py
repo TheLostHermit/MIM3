@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-import pytz
+import random
 from django.utils import timezone
 from django.template.defaultfilters import date as format_date
 from django.template.defaultfilters import time as format_time
@@ -60,6 +60,19 @@ class Post(models.Model):
 
         type = self.is_project and "Project" or "Post"
         return f"{type} : {self.title}"
+
+    # adds a property which finds a random image associated with the post that has an icon status
+    @property
+    def get_icon(self):
+        
+        all_icons = self.related_images.filter(is_icon = True)
+
+        if all_icons.exists():
+            return all_icons[random.randrange(len(all_icons))]
+
+        else:
+            return False
+
 
     # adds a property which sends out a form which lets the user filter volunteers by event and type
     @property

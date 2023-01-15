@@ -16,6 +16,8 @@
     <!-- A form to create a new event -->
 
     <div>
+
+        <!-- not much to style in this form except -->
         <form class="form-control mb-3" action="{% url 'change_event' %}" method="post">
             {% csrf_token %}
 
@@ -24,6 +26,7 @@
                     {% crispy event_form event_form.helper %}
                 </div>
 
+                <!-- this submit button -->
                 <div class="col">
                     <input type="submit" value="add event">
                 </div>
@@ -32,13 +35,8 @@
             
 
             <input type="hidden" name="post-id" id="post-id-input" value={{ post_pk }}>
-
-            
-
         </form>
     </div>
-
-    <hr>
 
     <!-- a list view for all the images currently associated with the project-->
 
@@ -49,8 +47,10 @@
             <!-- displays the event along with a hidden div which can be used to change that event -->
             <div id="event-{{event.pk}}-div">
 
+                <!-- div with the information on the event -->
                 <div id="event-{{event.pk}}-info-div">
 
+                    <!-- event date and time -->
                     <p>{{ event.datetime }}</p>
 
                     <!-- if the event is open, display the button indicating that it can be closed, else vice versa 
@@ -70,9 +70,8 @@
                     {% endif %}
 
                     <!-- these buttons display divs with further information for each of their functions -->
-                    <button id="delete-{{event.pk}}-warning-btn" onclick="delete_event_warning({{event.id}})">Delete Event</button>
                     <button id="toggle-change-{{event.pk}}-btn" value="none" onclick="toggle_change(this, {{event.id}})">Change Event Date or Time</button>
-
+                    <button id="delete-{{event.pk}}-warning-btn" onclick="delete_event_warning({{event.id}})">Delete Event</button>
                 </div>
 
                 <!-- div for the buttons which confirm deletion of an event-->
@@ -105,6 +104,8 @@
 
 
         {% empty %}
+
+            <!-- html which is displayed when no events are in the list -->
             There are no events associated with this post
 
         {% endfor %}

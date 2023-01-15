@@ -17,19 +17,23 @@ Pinned
     <!-- Displaying information from each of the orgs the user has pinned -->
     {%  for org in organization_list %}
 
+        <!-- the div for each organization entry -->
         <div id="organization-{{ org.pk }}-div">
 
-            <a href="{% url 'posts_by_org' org_pk=org.pk %}"><h1> {{ org.name}} </h1></a>  
-        
-            <button type="button" id="unpin-org-{{org.pk}}" onclick = unpin("{{ org.pk }}")>Unpin</button>
-            
+            <!-- the logo of the URL in an <a> tag so clicking it takes you to their detail page -->
             <a href="{% url 'organization_view' pk=org.pk %}"><img src="{{ org.logo.url }}" alt="{{ org.name }}'s Logo"></a>
 
+            <!-- The name of the organization is a link which filters all posts so it only shows theirs (aka the feed page) -->
+            <a href="{% url 'posts_by_org' org_pk=org.pk %}"><h1> {{ org.name}} </h1></a>  
+        
+            <!-- the button you click to unpin the organization-->
+            <button type="button" id="unpin-org-{{org.pk}}" onclick = unpin("{{ org.pk }}")>Unpin</button>
+    
         </div>
 
-        <hr>
-
     {% empty %}
+
+        <!-- the message displayed when you haven't pinned any organizations yet. You can add an image here if you'd like -->
         Looks like you haven't pinned any organizations yet
     {% endfor %}
     

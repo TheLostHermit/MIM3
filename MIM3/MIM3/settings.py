@@ -49,6 +49,7 @@ CRISPY_CLASS_CONVERTERS = {
     'selectdatewidget':'form-control',
     'clearablefileinput':'form-control',
     'textarea':'form-control',
+    'radio': 'btn btn-outline-primary',
     
     }
 

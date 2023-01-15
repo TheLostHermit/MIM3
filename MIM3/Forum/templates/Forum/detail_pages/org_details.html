@@ -10,10 +10,14 @@
 {% endblock %}
 
 {% block body %}
-    <h1>{{ organization.name }}</h1>
-
+    
     {% csrf_token %}
     <input type="hidden" id="organization-id" value="{{ organization.pk }}">
+
+    <!-- name of the organization -->
+    <h1>{{ organization.name }}</h1>
+
+    <!-- button used to toggle whether the organization is pinned. Only style the button not the words inside -->
     <button type="button" id="toggle-pin-btn" onclick ="toggle_pin(this)" value="{{ pinned }}">
         {% if pinned %}
             Unpin
@@ -23,6 +27,7 @@
 
     </button>
 
+    <!-- link to see all posts by this organization -->
     <a href="{% url 'posts_by_org' org_pk=organization.pk %}">View posts by this organization</a>
 
     <!-- if the organization has an official email you can copy it here -->
@@ -30,22 +35,22 @@
         <button type="button" onclick="copy_text(this, '{{organization.official_email}}')">Copy Email</button>
     {% endif %}
 
+    <!-- if the organization has a logo it's displayed here -->
     {% if organization.logo %}
-        <img src="{{ organization.logo.url }}" alt="{{ org.name }}'s Logo">
-    {% endif %}
+        <img src="{{ organization.logo.url }}" alt="{{ organization.name }}'s Logo">
+    {% endif %} 
 
-    <hr>
-
+    <!-- information about the organization -->
     <p>{{ organization.about }}</p>
 
-    <hr>
-
+    <!-- section with the members of the organization -->
     <h2>Members: </h1>
 
     <ul>
         {% for member in organization.members.all %}
 
-        <li>{{ member.get_full_name }}</li>
+        <!-- members are listed with a link to view their profiles. -->
+        <li><a href="{% url 'profile_view' pk=member.pk %}">{{ member.get_full_name }}</a></li>
 
         {% empty %}
 
@@ -54,8 +59,5 @@
         {% endfor %}
         
     </ul>
-
-    
-    
 
 {% endblock %}

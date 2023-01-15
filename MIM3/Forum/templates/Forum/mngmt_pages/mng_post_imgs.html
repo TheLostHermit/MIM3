@@ -20,7 +20,8 @@
             {% csrf_token %}
             {{ image_form|crispy }}
 
-            <input type="submit" value="add image">
+            <br>
+            <input class="btn btn-primary" type="submit" value="add image">
 
         </form>
     </div>
@@ -39,13 +40,16 @@
         
         {% for image in postimage_list %}
 
+        <!-- div for the image entry -->
         <div id="img-{{image.id}}-div">
 
-            <!-- (needs to be styled) -->
+            <!-- (needs to be styled so that the image sizes are uniform) -->
             <img src="{{ image.image.url }}" alt="{{ image.image }}">
 
+            <!-- the image's name. Consider putting in a heading tag-->
             {{ image.name }}
 
+            <!-- button to toggle image status. Only change class of this -->
             {% if image.is_icon %}
 
                 <button type="button" id="toggle-img-{{image.pk}}-isicon" onclick="toggle_icon(this, {{ image.pk }})" value="true">This image is an icon. Click to remove icon status</button>
@@ -55,6 +59,8 @@
                 <button type="button" id="toggle-img-{{image.pk}}-isicon" onclick="toggle_icon(this, {{ image.pk }})" value="false">Make this image an icon</button>
 
             {% endif %}
+
+            <!-- button to delete the image -->
             <button type="button" id="delete-img-{{image.pk}}-btn" onclick="delete_image({{image.pk}})">Delete Image</button>
 
         </div>

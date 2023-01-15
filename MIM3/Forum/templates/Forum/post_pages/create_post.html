@@ -29,12 +29,24 @@ Create Post
             <div class="image-form">
                 
                 {% for image_form in image_formset %}
-                    {{ image_form|crispy }}                    
-                    <button id="image-{{ forloop.counter0 }}-rm"> Remove this image </button>
+
+                    <div class="row">
+                        <div class="col-9">
+                            {{ image_form|crispy }}
+
+                        </div>
+
+                        <div class="col">
+                            <br>
+                            <button class = "btn btn-primary" id="image-{{ forloop.counter0 }}-rm"> Remove this image </button>
+                        </div>
+                    </div>
+               
                 {% endfor %}
 
             </div>
-            <button id="add_new_image_btn"> Add Another Image Field </button>
+            <br>
+            <button id="add_new_image_btn" class = "btn btn-primary"> Add Another Image Field </button>
 
         </div>
         
@@ -50,14 +62,28 @@ Create Post
             <div class="event-form">
 
                 {% for event_form in event_formset %}
-                    {% crispy event_form %}                    
-                    <button id="event-{{ forloop.counter0 }}-rm"> Remove this event </button>
+
+                    <div class="row">
+                        <div class="col-9">
+                            {% crispy event_form %}
+
+                        </div>
+
+                        <div class="col">
+                            <br>
+                            <button class="btn btn-primary" id="event-{{ forloop.counter0 }}-rm"> Remove this event </button>
+                        </div>
+                    </div>
+                                        
+                    
                 {% endfor %}
             </div>
-            <button id="add_new_event_btn"> Add Another event </button>
+            <br>
+            <button class="btn btn-primary" id="add_new_event_btn"> Add Another event </button>
 
         </div>       
-        <input type="submit">
+        <br>
+        <button class="btn btn-primary" type="submit"> Create Post </button>
     </form>
 
     <br>

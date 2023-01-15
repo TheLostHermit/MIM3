@@ -10,29 +10,33 @@
 {% endblock %}
 
 {% block body %}
-<h1>{{ post.title }}</h1>
-Written on {{ post.timestamp }} by {{ post.author }} from <a href="{% url 'organization_view' pk=post.organization.pk %}">{{ post.organization }}</a>
-<hr>
 
+<!-- title of the post -->
+<h1>{{ post.title }}</h1>
+
+<!-- information about the post -->
+Written on {{ post.timestamp }} by {{ post.author }} from <a href="{% url 'organization_view' pk=post.organization.pk %}">{{ post.organization }}</a>
+
+<!-- for each image of the post -->
 {% for image in post.related_images.all %}
+    <!-- display the image -->
     <img src="{{ image.image.url }}" alt="{{ image.image }}">
 {% empty %}
     No images were found
 
 {% endfor %}
 
-<hr>
+<!-- main content of the post -->
 {{ post.body }}
 
-<hr>
-
-<!-- see if the user is logged in to prevent form inputs -->
+<!-- sees if the user is logged in to prevent form inputs -->
 <input type="hidden" id="user-logged-in" value="{{user.is_authenticated}}">
 
 {% if post.is_project %}
 
     <div>
 
+    <!-- form to input volunteer choices (needs styling but don't do anything but change classes and add other elements)-->
     <form action="{% url 'change_bids' %}" method="post" name="volunteer_form">
 
         {% csrf_token %}

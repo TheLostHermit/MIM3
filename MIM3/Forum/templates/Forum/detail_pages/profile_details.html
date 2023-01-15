@@ -9,28 +9,31 @@
 {% endblock %}
 
 {% block body %}
+
+    <!-- name of the person -->
     <h1>{{ profile.get_full_name }}</h1>
+
+    <!-- birthday of the person -->
     Born on {{ profile.birthday }} 
 
+    <!-- organization the member is a part of if they have one -->
     {% if profile.membership %}
         Member of <a href="{% url 'organization_view' pk=profile.membership.pk %}">{{ profile.membership.name }}</a>
 
-    {% else %}
-
-        This person is not a member of an organization
-
     {% endif %}
 
-    <!-- button used to copy email of profile -->
+    <!-- button used to copy email of profile only change the class of this -->
     <button type="button" onclick="copy_text(this, '{{ profile.email }}')">Copy Email</button>
     
-    <hr>
-        {{ profile.biography }}
-    <hr>
+    <!-- biography of the person -->
+    {{ profile.biography }}
 
+    <!-- list of organization the user has pinned -->
     <h2>Pinned Organizations: </h2>
     
     {% for org in profile.pinned.all %}
+
+        <!-- the organization name wrapped in a hyperlink to the organization's details -->
         <a href="{% url 'organization_view' pk=org.pk %}">{{ org.name }}  </a>        
     <br>
 
