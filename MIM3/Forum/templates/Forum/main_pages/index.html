@@ -8,30 +8,44 @@ Home
 {% block script %}
 {% endblock %}
 
+<div class="row row-cols-1 row-cols-md-2 g-4">
+    
+
 {% block body %}
     <!-- Displaying information from each of the posts in the database -->
     {% for post in post_list %}
 
+    <div class="col">
+
         <!-- the div for each post in the list -->
-        <div>
-
-            <!-- the timestamp for each post in the list -->
-            {{ post.timestamp }}
-
-            <!-- the name and link to the details of every post in the list -->
-            <h2> <a href="{% url 'detail_view' pk=post.pk %}">{{ post.title }}</a> </h2>
-
-            <!-- the first 300 characters of the body of the post. You can change the number of characters with the number -->
-            {{ post.body|truncatechars:300 }}
+        <!--N! I swapped this around without breaking it somehow wooooo-->
+        <div class="card">
 
             <!-- section which checks if an icon exists and renders it -->
             {% if post.get_icon %}
-                <img src="{{ post.get_icon.image.url }}" alt="{{ post.get_icon.name }}">
+                <img src="{{ post.get_icon.image.url }}" alt="{{ post.get_icon.name }}" class="card-img-top">
 
             {% else %}
                 This post has no icon
 
             {% endif %}
+
+            <div class="card-body">
+
+            <!-- the name and link to the details of every post in the list -->
+            <h2 class="card-title"> <a href="{% url 'detail_view' pk=post.pk %}">{{ post.title }}</a> </h2>
+
+            <!-- the timestamp for each post in the list -->
+            {{ post.timestamp }}
+
+            <div class="card-body">
+
+            <!-- the first 300 characters of the body of the post. You can change the number of characters with the number -->
+            {{ post.body|truncatechars:300 }}
+
+            </div>
+
+            
 
             <br>
 
@@ -50,6 +64,8 @@ Home
                 {% endfor %}
 
             {% endif %}
+            </div>
+        </div>
         </div>
         <hr>
 

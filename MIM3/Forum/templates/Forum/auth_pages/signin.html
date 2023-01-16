@@ -8,22 +8,26 @@ Sign In
 {% endblock %}
 
 {% block body %}
-    <h1> Sign into an account </h1>
+    <h1 class="text-center"> Sign into an account </h1>
 
     <!-- all of this is front end styling -->
+    <div class="mx-auto" style="width: 200px;">
     <form action="{% url 'login' %}" method="post">
         {% csrf_token %}
-        <input type="text", name="username", placeholder="Type your username...">
-        <b>OR</b>
+        <input type="text", name="username", placeholder="Type your username..."><br>
+        <b>OR</b><br>
+        <div class="input-group">
         <input type="text", name="first_name", placeholder="Type your first name...">
         <input type="text", name="last_name", placeholder="Type your last name...">
+        </div>
 
         <br>
         <input type="password", name="password", placeholder="Type your password...">
 
         {{ message }}
-        <input type="submit">
+        <input class="btn btn-primary" type="submit">
     </form>
+</div>
 
     <br>
 {% endblock %}

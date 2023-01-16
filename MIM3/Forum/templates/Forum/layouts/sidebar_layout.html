@@ -35,33 +35,45 @@
     </head>
 
     <body>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+
 
         {% load tz %}
         {% get_current_timezone as TIME_ZONE %}
         
         <!-- all the things that appear in the top of the document appear here -->
-        <div id = "topbar">
-            
+        
+        <div id = "topbar" class="container-fluid">
+
+            <div class="collapse navbar-collapse">
+                <div class="navbar-nav">
             <!-- if the user is logged in these links/messages show -->
             {% if user.is_authenticated %}
+            <span class="navbar-text">
                 Signed in as {{ request.user.username }}
-                <a href="{% url 'sign_out' %}">Sign out</a> <br>
-                <a href="{% url 'edit_profile' %}">Edit profile</a> <br>
+            </span>
+                <a class="nav-link" href="{% url 'sign_out' %}">Sign out</a> <br>
+                <a class="nav-link" href="{% url 'edit_profile' %}">Edit profile</a> <br>
             {% else %}
             
             <!-- if the user is not logged in these links show -->
-            <a href="{% url 'login' %}">Sign in</a> ||
-            <a href="{% url 'sign_up' %}">Sign up</a> ||
+            <a class="nav-link" href="{% url 'login' %}">Sign in</a> 
+            <a class="nav-link" href="{% url 'sign_up' %}">Sign up</a> 
             {% endif %}
+                </div>
+            </div>
 
             <!-- the current time in the specific timezone is shown here -->
+            <span class="navbar-text">
             The current time is:
             {% now "SHORT_DATETIME_FORMAT" %}
             The current zone is:
             {{ TIME_ZONE }}
+            </span>
 
             <!-- end of the top bar -->
         </div>
+    </nav>
 
         <!-- Using Bootstrap's row and column classes temporarily until styling is done -->
         <div class="container container-fluid">
