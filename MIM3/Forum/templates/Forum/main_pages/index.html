@@ -8,71 +8,76 @@ Home
 {% block script %}
 {% endblock %}
 
-<div class="row row-cols-1 row-cols-md-2 g-4">
+
     
 
 {% block body %}
+
+    <!-- (all divs have to be inside block body)-->
+    <div class="row row-cols-1 row-cols-md-2 g-4">
     <!-- Displaying information from each of the posts in the database -->
-    {% for post in post_list %}
+        {% for post in post_list %}
 
-    <div class="col">
+            <div class="col">
 
-        <!-- the div for each post in the list -->
-        <!--N! I swapped this around without breaking it somehow wooooo-->
-        <div class="card">
+                <!-- the div for each post in the list -->
+                <!--N! I swapped this around without breaking it somehow wooooo-->
+                <div class="card">
 
-            <!-- section which checks if an icon exists and renders it -->
-            {% if post.get_icon %}
-                <img src="{{ post.get_icon.image.url }}" alt="{{ post.get_icon.name }}" class="card-img-top">
+                    <!-- section which checks if an icon exists and renders it -->
+                    {% if post.get_icon %}
+                        <img src="{{ post.get_icon.image.url }}" alt="{{ post.get_icon.name }}" class="card-img-top">
 
-            {% else %}
-                This post has no icon
-
-            {% endif %}
-
-            <div class="card-body">
-
-            <!-- the name and link to the details of every post in the list -->
-            <h2 class="card-title"> <a href="{% url 'detail_view' pk=post.pk %}">{{ post.title }}</a> </h2>
-
-            <!-- the timestamp for each post in the list -->
-            {{ post.timestamp }}
-
-            <div class="card-body">
-
-            <!-- the first 300 characters of the body of the post. You can change the number of characters with the number -->
-            {{ post.body|truncatechars:300 }}
-
-            </div>
-
-            
-
-            <br>
-
-            <!-- showing the open dates for the project if there are any -->
-            {% if post.is_project %}
-
-                {% for event in post.project_times.all %}
-
-                    {% if event.open %}
-
-                        <!-- to format this with the card wrap this statement below with the formatting -->
-                        {{ event.datetime }}
-                        <!-- and stop the tag here -->
+                    {% else %}
+                        This post has no icon
 
                     {% endif %}
-                {% endfor %}
 
-            {% endif %}
+                    <div class="card-body">
+
+                    <!-- the name and link to the details of every post in the list -->
+                    <h2 class="card-title"> <a href="{% url 'detail_view' pk=post.pk %}">{{ post.title }}</a> </h2>
+
+                    <!-- the timestamp for each post in the list -->
+                    {{ post.timestamp }}
+
+                    <!-- the first 300 characters of the body of the post. You can change the number of characters with the number -->
+                    {{ post.body|truncatechars:300 }}
+
+                    </div>
+
+                    
+
+                    <br>
+
+                    <!-- showing the open dates for the project if there are any -->
+                    {% if post.is_project %}
+
+                        <ul class="list-group list-group-flush">
+
+                        {% for event in post.project_times.all %}
+
+                            {% if event.open %}
+
+                                <!-- to format this with the card wrap this statement below with the formatting -->
+                                <li class="list-group-item">{{ event.datetime }}</li>
+
+                            {% endif %}
+                        {% endfor %}
+
+                        </ul>
+
+                    {% endif %}
+                </div>
             </div>
-        </div>
-        </div>
-        <hr>
 
-    {% empty %}
 
-        <!-- The display when post_list evaluates to empty you can add a cute image here if you want-->
-        <p> Apologies, no posts were retrieved </p>
+        {% empty %}
 
-    {% endfor %}
+                <!-- The display when post_list evaluates to empty you can add a cute image here if you want-->
+                <p> Apologies, no posts were retrieved </p>
+
+        {% endfor %}
+
+    </div>
 {% endblock %}
