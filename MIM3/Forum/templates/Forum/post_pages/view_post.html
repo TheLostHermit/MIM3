@@ -18,13 +18,19 @@
 Written on {{ post.timestamp }} by {{ post.author }} from <a href="{% url 'organization_view' pk=post.organization.pk %}">{{ post.organization }}</a>
 
 <!-- for each image of the post -->
-{% for image in post.related_images.all %}
-    <!-- display the image -->
-    <img src="{{ image.image.url }}" alt="{{ image.image }}">
-{% empty %}
-    No images were found
+<div class="carousel slide">
+    <div class="carousel-inner">
+        {% for image in post.related_images.all %}
+            <!-- display the image -->
+            <div class="carousel-item">
+                <img src="{{ image.image.url }}" class="d-block w-100" alt="{{ image.image }}">
+            </div>
+        {% empty %}
+            No images were found
 
-{% endfor %}
+        {% endfor %}
+    </div>
+</div>
 
 <!-- main content of the post -->
 {{ post.body }}

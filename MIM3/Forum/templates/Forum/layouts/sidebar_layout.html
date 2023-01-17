@@ -83,30 +83,32 @@
         <div class = "row">
 
             <!-- div with all the links that appear in the sidebar-->
-            <div id ="sidebar" class = "col-3">
+            <div id ="sidebar" class = "col-3 side-navbar active-nav d-flex flex-wrap flex-column">
+                <div class="d-grid gap-2"
 
-                <!-- whether or not the user is logged in they can go to the home page
-                (you can make this link the organization logo)-->
-                <a href="{% url 'index' %}">Home</a> <br>
+                    <!-- whether or not the user is logged in they can go to the home page
+                    (you can make this link the organization logo)-->
+                    <a href="{% url 'index' %}">Home</a> <br>
 
-                <!-- links that only appear to logged in users-->
-                {% if user.is_authenticated %}
+                    <!-- links that only appear to logged in users-->
+                    {% if user.is_authenticated %}
 
-                    <a href="{% url 'pinned_view' %}">Pinned Organizations</a> <br>
-                    <a href="{% url 'your_project_view' %}">Your Dashboard</a> <br>
-                    <a href="{% url 'profile_view' pk=user.pk %}">See your profile</a> <br>
-                    <a href="{% url 'received_messages' %}">Received Messages</a> <br>
+                        <a href="{% url 'pinned_view' %}">Pinned Organizations</a> <br>
+                        <a href="{% url 'your_project_view' %}">Your Dashboard</a> <br>
+                        <a href="{% url 'profile_view' pk=user.pk %}">See your profile</a> <br>
+                        <a href="{% url 'received_messages' %}">Received Messages</a> <br>
 
-                    <!-- links that only appear to members of an organization -->
-                    {% if perms.Forum.can_post %}
+                        <!-- links that only appear to members of an organization -->
+                        {% if perms.Forum.can_post %}
 
-                        <a href="{% url 'create_post' %}">Create a post</a> <br>
-                        <a href="{% url 'manage_posts_view' %}">Organization Dashboard</a> <br>
-                        <a href="{% url 'sent_messages' %}">Sent Messages</a> <br>
+                            <a href="{% url 'create_post' %}">Create a post</a> <br>
+                            <a href="{% url 'manage_posts_view' %}">Organization Dashboard</a> <br>
+                            <a href="{% url 'sent_messages' %}">Sent Messages</a> <br>
+
+                        {% endif %}
 
                     {% endif %}
-
-                {% endif %}
+                </div>
                 
             <!-- end of the side bar div -->    
             </div>

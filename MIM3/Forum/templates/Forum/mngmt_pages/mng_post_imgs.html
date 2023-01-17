@@ -37,32 +37,41 @@
             but maintaining the overall view structure makes most sense) -->
         
             <input type="hidden" id="post-id-input" value={{ post_pk }}>
+
+        <div class="row row-cols-1 row-cols-md-2 g-4">
         
-        {% for image in postimage_list %}
+            {% for image in postimage_list %}
 
-        <!-- div for the image entry -->
-        <div id="img-{{image.id}}-div">
+        
 
-            <!-- (needs to be styled so that the image sizes are uniform) -->
-            <img src="{{ image.image.url }}" alt="{{ image.image }}">
+            <!-- div for the image entry -->
+            <div id="img-{{image.id}}-div">
+            <div class="col">
+                <div class="card" style="width: 20rem;">
 
-            <!-- the image's name. Consider putting in a heading tag-->
-            {{ image.name }}
+                    <!-- (needs to be styled so that the image sizes are uniform) -->
+                    <img src="{{ image.image.url }}" class="img-thumbnail" width="300px" alt="{{ image.image }}">
 
-            <!-- button to toggle image status. Only change class of this -->
-            {% if image.is_icon %}
+                    <!-- the image's name. Consider putting in a heading tag-->
+                    <h3 class="card-title">{{ image.name }}</h3>
 
-                <button type="button" id="toggle-img-{{image.pk}}-isicon" onclick="toggle_icon(this, {{ image.pk }})" value="true">This image is an icon. Click to remove icon status</button>
+                    <!-- button to toggle image status. Only change class of this -->
+                    {% if image.is_icon %}
 
-            {% else %}
+                        <button type="button" class="btn btn-primary" id="toggle-img-{{image.pk}}-isicon" onclick="toggle_icon(this, {{ image.pk }})" value="true">This image is an icon. Click to remove icon status</button>
 
-                <button type="button" id="toggle-img-{{image.pk}}-isicon" onclick="toggle_icon(this, {{ image.pk }})" value="false">Make this image an icon</button>
+                    {% else %}
 
-            {% endif %}
+                        <button type="button" class="btn btn-primary"  id="toggle-img-{{image.pk}}-isicon" onclick="toggle_icon(this, {{ image.pk }})" value="false">Make this image an icon</button>
 
-            <!-- button to delete the image -->
-            <button type="button" id="delete-img-{{image.pk}}-btn" onclick="delete_image({{image.pk}})">Delete Image</button>
+                    {% endif %}
 
+                    <!-- button to delete the image -->
+                    <button type="button" class="btn btn-danger" id="delete-img-{{image.pk}}-btn" onclick="delete_image({{image.pk}})">Delete Image</button>
+                </div>
+
+            </div>
+            </div>
         </div>
 
         <hr>

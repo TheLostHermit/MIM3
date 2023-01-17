@@ -15,8 +15,10 @@ Post Dashboard
     
 
     <!-- Displaying each post from the post_list -->
-
+    
     {% for post in post_list %}
+    <div class="border border-3">
+
 
         <h1><a href="{% url 'detail_view' pk=post.pk %}">{{ post.title }}</a></h1>
 
@@ -54,29 +56,24 @@ Post Dashboard
 
                     <!-- center this and style it so it doesn't look so weird -->
                     <div class="col">
-                        <input type="submit" formaction="{% url 'manage_volunteers' action='list'  %}" value="search">
-                        <input type="submit" formaction="{% url 'manage_volunteers' action='message'  %}" value="Send Message">
+                        <input class="btn btn-secondary" type="submit" formaction="{% url 'manage_volunteers' action='list'  %}" value="Search">
+                        <input class="btn btn-secondary" type="submit" formaction="{% url 'manage_volunteers' action='message'  %}" value="Send Message">
 
                     </div>
 
                 </div>
-                
-                
-                
-
-                
-
-                
-
+        
             </form>
 
-            
+        
         </div>
         {% endif %}
+        
 
 
-        <hr>
+    
 
+    </div>
     <!-- If it's empty the user hasn't volunteered for anything yet -->
     {% empty %}
 
