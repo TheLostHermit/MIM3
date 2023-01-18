@@ -11,21 +11,27 @@ Sign In
     <h1 class="text-center"> Sign into an account </h1>
 
     <!-- all of this is front end styling -->
-    <div class="mx-auto" style="width: 200px;">
+    <div class="mx-auto" style="width: 50%;" align="center">
     <form action="{% url 'login' %}" method="post">
         {% csrf_token %}
-        <input type="text", name="username", placeholder="Type your username..."><br>
-        <b>OR</b><br>
-        <div class="input-group">
-        <input type="text", name="first_name", placeholder="Type your first name...">
-        <input type="text", name="last_name", placeholder="Type your last name...">
+        <div class="input-group mb-3">
+            <span class="input-group-text">Username</span>
+            <input class="form-control" type="text" name="username" placeholder="Type your username..."><br>
+        </div>
+        <b>OR</b>
+        <div class="input-group mb-3">
+            <span class="input-group-text">First Name</span>
+            <input class="form-control" type="text" name="first_name" placeholder="Type your first name...">
+            <span class="input-group-text">Last Name</span>
+            <input class="form-control" type="text" name="last_name" placeholder="Type your last name...">
         </div>
 
-        <br>
-        <input type="password", name="password", placeholder="Type your password...">
+        <div class="input-group mb-3">
+        <input class="form-control" type="password" name="password" placeholder="Type your password...">
 
         {{ message }}
-        <input class="btn btn-primary" type="submit">
+        <input class="btn btn-success" type="submit" value="Log in">
+        </div>
     </form>
 </div>
 

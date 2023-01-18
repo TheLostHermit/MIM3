@@ -35,31 +35,31 @@
     </head>
 
     <body>
-        <nav class="navbar navbar-expand-lg bg-body-tertiary">
-
+    
+    <nav class="navbar navbar-expand-md fixed-top" style="background-color: #e3f2fd;">
 
         {% load tz %}
         {% get_current_timezone as TIME_ZONE %}
         
         <!-- all the things that appear in the top of the document appear here -->
-        
         <div id = "topbar" class="container-fluid">
 
             <div class="collapse navbar-collapse">
                 <div class="navbar-nav">
-            <!-- if the user is logged in these links/messages show -->
-            {% if user.is_authenticated %}
-            <span class="navbar-text">
-                Signed in as {{ request.user.username }}
-            </span>
-                <a class="nav-link" href="{% url 'sign_out' %}">Sign out</a> <br>
-                <a class="nav-link" href="{% url 'edit_profile' %}">Edit profile</a> <br>
-            {% else %}
-            
-            <!-- if the user is not logged in these links show -->
-            <a class="nav-link" href="{% url 'login' %}">Sign in</a> 
-            <a class="nav-link" href="{% url 'sign_up' %}">Sign up</a> 
-            {% endif %}
+                    <!-- if the user is logged in these links/messages show -->
+                    {% if user.is_authenticated %}
+                    <span class="navbar-text">
+                        Signed in as {{ request.user.username }}
+                    </span>
+                    <a class="nav-link" href="{% url 'sign_out' %}">Sign out</a>
+                    <a class="nav-link" href="{% url 'edit_profile' %}">Edit profile</a>
+                    
+                    {% else %}
+                    
+                    <!-- if the user is not logged in these links show -->
+                    <a class="nav-link" href="{% url 'login' %}">Sign in</a> 
+                    <a class="nav-link" href="{% url 'sign_up' %}">Sign up</a> 
+                    {% endif %}
                 </div>
             </div>
 
@@ -76,45 +76,47 @@
     </nav>
 
         <!-- Using Bootstrap's row and column classes temporarily until styling is done -->
-        <div class="container container-fluid">
+        <div class="container-fluid" style="margin-top:80px">
 
         <!-- when using the sidebar the row/column dynamic won't be needed anymore because the sidebar
         will already be on the side -->
         <div class = "row">
 
             <!-- div with all the links that appear in the sidebar-->
-            <div id ="sidebar" class = "col-3 side-navbar active-nav d-flex flex-wrap flex-column">
-                <div class="d-grid gap-2"
+            <div id ="sidebar" class = "col-2 px-1 h-100 position-fixed">
+                <div class="nav flex-column">
 
                     <!-- whether or not the user is logged in they can go to the home page
                     (you can make this link the organization logo)-->
-                    <a href="{% url 'index' %}">Home</a> <br>
-
+                    <ul class="nav nav-pills flex-column mb-auto">
+                        <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a>                        
+                        </li>
                     <!-- links that only appear to logged in users-->
                     {% if user.is_authenticated %}
 
-                        <a href="{% url 'pinned_view' %}">Pinned Organizations</a> <br>
-                        <a href="{% url 'your_project_view' %}">Your Dashboard</a> <br>
-                        <a href="{% url 'profile_view' pk=user.pk %}">See your profile</a> <br>
-                        <a href="{% url 'received_messages' %}">Received Messages</a> <br>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'pinned_view' %}">Pinned Organizations</a> </li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'your_project_view' %}">Your Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'profile_view' pk=user.pk %}">See your profile</a> </li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'received_messages' %}">Received Messages</a> </li>
 
                         <!-- links that only appear to members of an organization -->
                         {% if perms.Forum.can_post %}
 
-                            <a href="{% url 'create_post' %}">Create a post</a> <br>
-                            <a href="{% url 'manage_posts_view' %}">Organization Dashboard</a> <br>
-                            <a href="{% url 'sent_messages' %}">Sent Messages</a> <br>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'create_post' %}">Create a post</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'manage_posts_view' %}">Organization Dashboard</a> </li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'sent_messages' %}">Sent Messages</a> </li>
 
                         {% endif %}
 
                     {% endif %}
+                    </ul>
                 </div>
                 
             <!-- end of the side bar div -->    
             </div>
 
             <!-- div with all the information to the right of the page -->
-            <div id = "body" class = "col">
+            <div id = "body" class = "col offset-2">
 
                 <!--- start of content to the right of the sidebar -->
                 {% localtime on %}

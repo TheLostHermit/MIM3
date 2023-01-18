@@ -13,28 +13,26 @@ Your Volunteered Projects
 
     {% for bid in bid_list %}
 
-    <div class="card">
+    <div class="card mb-3">
 
         <div class="card-header">
-            <h1><a href="{% url 'detail_view' pk=bid.event.post.pk %}">{{ bid.event.post.title }}</a></h1>
+            {{ bid.event.datetime }} from {{ bid.event.post.organization }}  
         </div>
 
-        <div class="card-body">
+        <div class="card-body mb-3">
+            <div class="row g-0 align-items-center">
+                <div class="col">
+                    <h1><a href="{% url 'detail_view' pk=bid.event.post.pk %}">{{ bid.event.post.title }}</a></h1>
+                    <!-- *Get status display is used to get the human readable name from the status choice field -->
+                    <b>Status:</b> {{ bid.get_status_display }}
+                </div>
 
-            <!-- *Get status display is used to get the human readable name from the status choice field -->
-            <b>Status:</b> {{ bid.get_status_display }} <br>
-            {{ bid.event.datetime }} from {{ bid.event.post.organization }}
-
-            <!-- button to delete this item (sends user to a confirmation page )-->
-            <a class="btn" href="{% url 'delete_bid' pk=bid.pk %}"> <button type="button" class="btn-close" aria-label="Close"></button></a>
-
-        
-
-            
-
-        </div>
-
-        
+                <div class="col-md-1">
+                <!-- button to delete this item (sends user to a confirmation page )-->
+                    <a class="btn" href="{% url 'delete_bid' pk=bid.pk %}"> <button type="button" class="btn-close" aria-label="Close"></button></a>
+                </div>
+            </div>
+        </div>  
     </div>
 
     <!-- If it's empty the user hasn't volunteered for anything yet -->
