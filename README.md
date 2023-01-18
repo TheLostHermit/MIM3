@@ -3,7 +3,7 @@ The prototype of a dedicated forum for entities addressing climate change to sho
 
 ## Running this Application
 ### Downloads Required
-The following can be installed using python's preferred installer program (pip). It is recommended that these be installed in a python virtual environment rather than globally on your computer:
+Python 3.9 was used to run this application but subsequent releases should be compatible. The following can be installed using python's preferred installer program (pip). It is recommended that these be installed in a python virtual environment rather than globally on your computer:
 - django (4.1.5) : The web development framework required to run the site
 - pillow (9.4.0) : used to serve static files in django
 - django-crispy-forms (1.14.0) : used to style forms in django
