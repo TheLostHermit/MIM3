@@ -76,6 +76,9 @@ The HTML pages of this web application can be found in `MIM3/Forum/templates/For
 - `create_post.html`: Page allowing organization members to create a post with optionla associated images and events
 - `view_post.html`: Page allowing users to view posts
 
+### Utility Pages (`util_pages`)
+- `delete_page.html`: Page used to confirm deletion of an object
+- `error_page.html`: Page used to notify a user of an authentication or miscellaneous error
 ## Other Files of This Application
 Generally, the function of each file not mentioned above is in accordance with the general functioning of a Django application. In order to assess which backend
 function in `views.py` serves which HTML file, look for the path of the HTML file in the variable `HTML_PAGE` for function based views and `template_name` for class
