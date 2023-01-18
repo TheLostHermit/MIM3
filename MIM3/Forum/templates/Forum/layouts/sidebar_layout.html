@@ -36,7 +36,7 @@
 
     <body>
     
-    <nav class="navbar navbar-expand-md fixed-top" style="background-color: #e3f2fd;">
+    <nav class="navbar navbar-expand-md fixed-top navbar-dark" style="background-color: #2F4858;">
 
         {% load tz %}
         {% get_current_timezone as TIME_ZONE %}
@@ -76,35 +76,41 @@
     </nav>
 
         <!-- Using Bootstrap's row and column classes temporarily until styling is done -->
-        <div class="container-fluid" style="margin-top:80px">
+        <div class="container-fluid" style="margin-top:60px">
 
         <!-- when using the sidebar the row/column dynamic won't be needed anymore because the sidebar
         will already be on the side -->
         <div class = "row">
 
             <!-- div with all the links that appear in the sidebar-->
-            <div id ="sidebar" class = "col-2 px-1 h-100 rounded position-fixed" style="background-color: #e3f2fd;">
+            <div id ="sidebar" class = "col-2 px-1 h-100 rounded position-fixed" style="background-color: #0E6070;">
                 <div class="nav flex-column">
+
+                    <div style="padding:20px">
+                        <a class="nav-link link-light" href="{% url 'index' %}"><img src="{% static 'Forum/media/logos/logo_white.png' %}" class="img-fluid" alt="Home"></a>
+                        <hr>
+                    </div>
 
                     <!-- whether or not the user is logged in they can go to the home page
                     (you can make this link the organization logo)-->
                     <ul class="nav nav-pills flex-column mb-auto">
-                        <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a>                        
-                        </li>
+                                                
+                        
                     <!-- links that only appear to logged in users-->
                     {% if user.is_authenticated %}
 
-                        <li class="nav-item"><a class="nav-link" href="{% url 'pinned_view' %}">Pinned Organizations</a> </li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'your_project_view' %}">Your Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'profile_view' pk=user.pk %}">See your profile</a> </li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'received_messages' %}">Received Messages</a> </li>
+                        <li class="nav-item"><a class="nav-link link-light" href="{% url 'pinned_view' %}">Pinned Organizations</a> </li>
+                        <li class="nav-item"><a class="nav-link link-light" href="{% url 'your_project_view' %}">Your Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link link-light" href="{% url 'profile_view' pk=user.pk %}">See your profile</a> </li>
+                        <li class="nav-item"><a class="nav-link link-light" href="{% url 'received_messages' %}">Received Messages</a> </li>
 
                         <!-- links that only appear to members of an organization -->
                         {% if perms.Forum.can_post %}
-
-                            <li class="nav-item"><a class="nav-link" href="{% url 'create_post' %}">Create a post</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'manage_posts_view' %}">Organization Dashboard</a> </li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'sent_messages' %}">Sent Messages</a> </li>
+                            <div style="padding:20px"><hr></div>
+                            <b class="text-light m-3">For your Organization</b>
+                            <li class="nav-item"><a class="nav-link link-light" href="{% url 'create_post' %}">Create a post</a></li>
+                            <li class="nav-item"><a class="nav-link link-light" href="{% url 'manage_posts_view' %}">Organization Dashboard</a> </li>
+                            <li class="nav-item"><a class="nav-link link-light" href="{% url 'sent_messages' %}">Sent Messages</a> </li>
 
                         {% endif %}
 
@@ -116,7 +122,7 @@
             </div>
 
             <!-- div with all the information to the right of the page -->
-            <div id = "body" class = "col offset-2">
+            <div id = "body" class = "col offset-2" style="padding:50px;">
 
                 <!--- start of content to the right of the sidebar -->
                 {% localtime on %}
