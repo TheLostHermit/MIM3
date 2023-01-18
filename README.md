@@ -82,5 +82,5 @@ function in `views.py` serves which HTML file, look for the path of the HTML fil
 based views. 
 
 ### Javascript
-These are found in `MIM3/Forum/static/script`. With exception of the extension name, javascript files have the same name as the html files which they service. `util.js` is the only javascript file named
+These are found in `MIM3/Forum/static/Forum/script`. With exception of the extension name, javascript files have the same name as the html files which they service. `util.js` is the only javascript file named
 otherwise, and it serves all the web pages because it is inherited through the `layouts`. 
