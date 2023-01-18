@@ -14,50 +14,77 @@
     {% csrf_token %}
     <input type="hidden" id="organization-id" value="{{ organization.pk }}">
 
-    <!-- name of the organization -->
-    <h1>{{ organization.name }}</h1>
+    <div id="organization-{{ org.pk }}-div" class="card mb-3">
 
-    <!-- button used to toggle whether the organization is pinned. Only style the button not the words inside -->
-    <button type="button" id="toggle-pin-btn" onclick ="toggle_pin(this)" value="{{ pinned }}">
-        {% if pinned %}
-            Unpin
-        {% else%}
-            Pin
-        {% endif %}
+        <div class="row g-0 align-items-center">
 
-    </button>
+            <!-- if the organization has a logo it's displayed here -->
+            {% if organization.logo %}
+                <div class="col-md-2">
+                    <img class="img-fluid rounded-start" src="{{ organization.logo.url }}" alt="{{ organization.name }}'s Logo">
+                </div>
+            {% endif %}
 
-    <!-- link to see all posts by this organization -->
-    <a href="{% url 'posts_by_org' org_pk=organization.pk %}">View posts by this organization</a>
+            <div class="col-md-7" style="padding:80px">
+                <!-- name of the organization -->
+                <h1>{{ organization.name }}</h1>
 
-    <!-- if the organization has an official email you can copy it here -->
-    {% if organization.official_email %}
-        <button type="button" onclick="copy_text(this, '{{organization.official_email}}')">Copy Email</button>
-    {% endif %}
+                <!-- link to see all posts by this organization -->
+                <a class="link-success" href="{% url 'posts_by_org' org_pk=organization.pk %}">View posts by this organization</a>
 
-    <!-- if the organization has a logo it's displayed here -->
-    {% if organization.logo %}
-        <img src="{{ organization.logo.url }}" alt="{{ organization.name }}'s Logo">
-    {% endif %} 
+            </div>
 
-    <!-- information about the organization -->
-    <p>{{ organization.about }}</p>
+            {% if organization.official_email %}
+                <div class="col-1">
+                    <button type="button" class="btn btn-outline-secondary" onclick="copy_text(this, '{{organization.official_email}}')">Copy Email</button>
+                </div>
+            {% endif %}
 
-    <!-- section with the members of the organization -->
-    <h2>Members: </h1>
+            <div class="col">
+                <!-- button used to toggle whether the organization is pinned. Only style the button not the words inside -->
+                <button type="button" class="btn btn-danger align-middle" id="toggle-pin-btn" onclick ="toggle_pin(this)" value="{{ pinned }}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pin-angle-fill" viewBox="0 0 16 16">
+                    <path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/>
+                    </svg>
+                    {% if pinned %}
+                        Unpin
+                    {% else%}
+                        Pin
+                    {% endif %}
 
-    <ul>
-        {% for member in organization.members.all %}
+                </button>
 
-        <!-- members are listed with a link to view their profiles. -->
-        <li><a href="{% url 'profile_view' pk=member.pk %}">{{ member.get_full_name }}</a></li>
+            </div>
+            
+            <!-- if the organization has an official email you can copy it here -->
+            
+  
+        </div>
+    </div>
 
-        {% empty %}
+    <div class="bar-in rounded border mb-3 p-3 align-items-center">
 
-            <p> There are no members of this organization </p>
+        <h2>About: </h2>
+        <!-- information about the organization -->
+        <p>{{ organization.about }}</p>
+    </div>
 
-        {% endfor %}
-        
-    </ul>
+    <div class="bar-in rounded border mb-3 p-3 align-items-center">
+        <!-- section with the members of the organization -->
+        <h2>Members: </h2>
+
+        <ul class="list-inline">
+            {% for member in organization.members.all %}
+
+            <!-- members are listed with a link to view their profiles. -->
+            <li class="list-inline-item"><a href="{% url 'profile_view' pk=member.pk %}">{{ member.get_full_name }}</a></li>
+
+            {% empty %}
+
+                <p> There are no members of this organization </p>
+
+            {% endfor %}
+            
+        </ul>
+    </div>
 
 {% endblock %}

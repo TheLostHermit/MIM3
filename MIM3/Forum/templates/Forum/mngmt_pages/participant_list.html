@@ -18,34 +18,42 @@ Participants
         <!-- only display a submit button and the button to copy emails if the list has any values -->
         {% if bid_list %}
 
-            <!-- button to copy the emails of the participants in this list -->
-            <button type="button" id="copy-emails-button" onclick = "copy_text(this, '{{ mail_list }}')">Copy Emails for this List</button>
-           
-            <!-- button to save changes to the list -->
-            <input type="submit" value="Save Changes">
+            <div class="bar-in rounded structure border mb-3 p-3">
+                <!-- button to copy the emails of the participants in this list -->
+                <button type="button" class="btn btn-outline-secondary" id="copy-emails-button" onclick = "copy_text(this, '{{ mail_list }}')">Copy Emails for this List</button>
+            
+                <!-- button to save changes to the list -->
+                <input type="submit" class="btn btn-outline-success"  value="Save Changes">
 
-            <input type="hidden" value="{{ bid_ids }}" name="bid_ids">
+                <input type="hidden" value="{{ bid_ids }}" name="bid_ids">
+            </div>
         {% endif %}
 
-
+        
         <!-- for every item in the list -->
         {% for bid in bid_list %}
 
         <!-- the div with the item. Do not change ID -->
-        <div id="bid-{{ bid.pk }}-div">
+        <div id="bid-{{ bid.pk }}-div" class="bar-in rounded border mb-3 p-3 align-items-center">
+            <div class="row g-0 align-items-center">
 
-            <!-- the name of the person -->
-            <h1>{{ bid.bidder.get_full_name }}</h1>
+                <div class="col-md-8">
 
-            <!-- an HREF with their username that opens a new tab with their profile-->
-            <a href="{% url 'profile_view' pk=bid.bidder.pk %}" target="_blank" rel="noopener noreferrer">{{ bid.bidder.username}}</a> <br>
+                    <!-- the name of the person -->
+                    <h1>{{ bid.bidder.get_full_name }}</h1>
 
-            <!-- the radio form to change their status -->
-            {{ bid.get_status_form|crispy }}
+                    <!-- an HREF with their username that opens a new tab with their profile-->
+                    <a href="{% url 'profile_view' pk=bid.bidder.pk %}" target="_blank" rel="noopener noreferrer">{{ bid.bidder.username}}</a> <br>
+                </div>
+
+                <div class="col">
+                    <!-- the radio form to change their status -->
+                    {{ bid.get_status_form|crispy }}
+                </div>
+
+            </div>
 
         </div>
-
-        <hr>
 
         <!-- if there are no bids on this event -->
         {% empty %}

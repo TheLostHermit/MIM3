@@ -16,7 +16,7 @@ Your Volunteered Projects
     <div class="card mb-3">
 
         <div class="card-header">
-            {{ bid.event.datetime }} from {{ bid.event.post.organization }}  
+            At {{ bid.event.datetime }} with {{ bid.event.post.organization }}  
         </div>
 
         <div class="card-body mb-3">
@@ -28,7 +28,7 @@ Your Volunteered Projects
                 </div>
 
                 <div class="col-md-1">
-                <!-- button to delete this item (sends user to a confirmation page )-->
+                    <!-- button to delete this item (sends user to a confirmation page )-->
                     <a class="btn" href="{% url 'delete_bid' pk=bid.pk %}"> <button type="button" class="btn-close" aria-label="Close"></button></a>
                 </div>
             </div>

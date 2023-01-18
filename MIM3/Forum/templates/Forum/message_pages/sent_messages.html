@@ -15,19 +15,23 @@ Sent Messages
     <!-- for every sent message display the message sender and content -->
     {% for message in message_list %}
 
-        <div>
+        <div class="card mb-3">
 
-            <p> 
+            <div class="card-header">
                 Sent by: {{ message.sender.get_full_name }} ({{ message.sender.username }}) at {{ message.timestamp }}
                 For {{ message.event.post.title }} ({{ message.event.datetime }})
-            </p>
+            </div>
 
-            Contents:
-            <p> {{ message.content }} </p>
+            <div class="row g-0 align-items-center">
+                <div class="col" style="padding:20px">
+                    <p> {{ message.content }} </p>
+                </div>
 
-            <a class="btn btn-primary" href="{% url 'delete_message' pk=message.pk %}"> Delete </a>
-
-            <hr>
+                <div class="col-md-2">
+                    <a class="btn btn-danger" href="{% url 'delete_message' pk=message.pk %}"> Delete </a>
+                </div>
+        
+            </div>
 
         </div>
 

@@ -11,34 +11,50 @@
 {% block body %}
 
     <!-- name of the person -->
-    <h1>{{ profile.get_full_name }}</h1>
+    <div class="bar-in rounded border mb-3 p-3 align-items-center">
+        <div class="row g-0 align-items-center">
 
-    <!-- birthday of the person -->
-    Born on {{ profile.birthday }} 
+            <div class="col-md-10">
+                <h1>{{ profile.get_full_name }}</h1>
+                <!-- birthday of the person -->
+                <div class="d-inline">Born on {{ profile.birthday }}.</div>
 
-    <!-- organization the member is a part of if they have one -->
-    {% if profile.membership %}
-        Member of <a href="{% url 'organization_view' pk=profile.membership.pk %}">{{ profile.membership.name }}</a>
+                <!-- organization the member is a part of if they have one -->
+                {% if profile.membership %}
+                    <div class="d-inline">Member of <a href="{% url 'organization_view' pk=profile.membership.pk %}">{{ profile.membership.name }}</a></div>
+                {% endif %}
 
-    {% endif %}
+            </div>
 
-    <!-- button used to copy email of profile only change the class of this -->
-    <button type="button" onclick="copy_text(this, '{{ profile.email }}')">Copy Email</button>
-    
-    <!-- biography of the person -->
-    {{ profile.biography }}
+            <div class="col">
+                <!-- button used to copy email of profile only change the class of this -->
+                <button class="btn btn-outline-secondary" type="button" onclick="copy_text(this, '{{ profile.email }}')">Copy Email</button>
 
-    <!-- list of organization the user has pinned -->
-    <h2>Pinned Organizations: </h2>
-    
-    {% for org in profile.pinned.all %}
+            </div>
+        </div>
+    </div>
 
-        <!-- the organization name wrapped in a hyperlink to the organization's details -->
-        <a href="{% url 'organization_view' pk=org.pk %}">{{ org.name }}  </a>        
-    <br>
+    <div class="bar-in rounded border mb-3 p-3 align-items-center">
+        <!-- biography of the person -->
+        <h2>Biography: </h2>
+        {{ profile.biography }}
 
-    {% empty %}
-        (This user has no pinned organizations)
-    {% endfor %}
+    </div>
+
+    <div class="bar-in rounded border mb-3 p-3 align-items-center">
+        
+        <!-- list of organization the user has pinned -->
+        <h2>Pinned Organizations: </h2>
+        
+        {% for org in profile.pinned.all %}
+
+            <!-- the organization name wrapped in a hyperlink to the organization's details -->
+            <div class="d-inline"><a class="btn btn-outline-success" href="{% url 'organization_view' pk=org.pk %}">{{ org.name }}  </a>    </div>
+
+        {% empty %}
+            <p>(This user has no pinned organizations)</p>
+        {% endfor %}
+
+    </div>
 
 {% endblock %}

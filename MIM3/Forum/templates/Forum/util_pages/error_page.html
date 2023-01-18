@@ -11,22 +11,23 @@
 {% block body %}
 
     <!-- the page which renders when the site encounters an error-->
+    <div class="mx-auto" style="width: 50%;" align="center">
+        <!-- the html which is displayed when the user lacks permissions -->
+        {% if type == "permission required" %}
+            <h1>You do not have permission to perform this action...</h1>
+            <a class="btn btn-success" href="{% url 'login' %}">Sign into a different account</a>
 
-    <!-- the html which is displayed when the user lacks permissions -->
-    {% if type == "permission required" %}
-        <h1>You do not have permission to perform this action...</h1>
-        <a class="btn btn-primary" href="{% url 'login' %}">Sign into a different account</a>
 
+        <!-- the html displayed when the user encounters another type of error -->
+        {% elif type == "error" %}
+            <h1>The site has encountered an error...</h1>
 
-    <!-- the html displayed when the user encounters another type of error -->
-    {% elif type == "error" %}
-        <h1>The site has encountered an error...</h1>
+        {% endif %}
 
-    {% endif %}
-
-    <!-- buttons that lets the user do things from this page. Only style classes-->
-    <button onclick="history.back()">Attempt to go Back</button>
-    <a class="btn btn-primary" href="{% url 'index' %}">Return to home</a> <br>
+        <!-- buttons that lets the user do things from this page. Only style classes-->
+        <button class="btn btn-success" onclick="history.back()">Attempt to go Back</button>
+        <a class="btn btn-success" href="{% url 'index' %}">Return to home</a> <br>
+    </div>
     
 
 {% endblock %}

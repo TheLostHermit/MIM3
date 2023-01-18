@@ -20,14 +20,14 @@ Post Dashboard
     <div class="bar-in rounded structure border mb-3 p-3">
 
 
-        <h1><a href="{% url 'detail_view' pk=post.pk %}">{{ post.title }}</a></h1>
+        <h1><a class="link-dark" href="{% url 'detail_view' pk=post.pk %}">{{ post.title }}</a></h1>
 
-        <a class="btn btn-primary" href="{% url 'delete_post' pk=post.pk %}"> Delete </a>
-        <a class="btn btn-primary" href="{% url 'change_post' pk=post.pk %}"> Edit title or body </a>
-        <a class="btn btn-primary" href="{% url 'manage_imgs' post_pk=post.pk %}"> Manage Related Images </a>
+        <a class="btn btn-danger" href="{% url 'delete_post' pk=post.pk %}"> Delete </a>
+        <a class="btn btn-outline-secondary" href="{% url 'change_post' pk=post.pk %}"> Edit title or body </a>
+        <a class="btn btn-outline-secondary" href="{% url 'manage_imgs' post_pk=post.pk %}"> Manage Related Images </a>
 
         <!-- if this is a post adding new events will make it a project -->
-        <a class="btn btn-primary" href="{% url 'manage_events' post_pk=post.pk %}"> 
+        <a class="btn btn-outline-secondary" href="{% url 'manage_events' post_pk=post.pk %}"> 
             {% if post.is_project %}
                 Manage Project dates
             {% else %}
@@ -36,7 +36,7 @@ Post Dashboard
         </a>
 
         {% if post.is_project %}
-        <button type="button" class="btn btn-primary" onclick="toggle_form(this, {{post.pk}})" value="Hidden">Manage Volunteers</button>
+        <button type="button" class="btn btn-outline-secondary" onclick="toggle_form(this, {{post.pk}})" value="Hidden">Manage Volunteers</button>
         <div id="post-{{post.pk}}-form-div" style="display:none">
 
             <br>

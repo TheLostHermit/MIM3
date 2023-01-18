@@ -15,23 +15,30 @@ Received Messages
     <!-- for every sent message display the message sender and content -->
     {% for message in message_list %}
 
-        <div>
+        <div id="organization-{{ org.pk }}-div" class="card mb-3">
 
-            <p> 
+            <div class="card-header">
                 Sent by: {{ message.sender.get_full_name }} ({{ message.sender.username }})
                 Of organization {{ message.sender.membership }}
                  at {{ message.timestamp }}
-                For {{ message.event.post.title }} ({{ message.event.datetime }})
-            </p>
+                For {{ message.event.post.title }} (Event at: {{ message.event.datetime }})
 
-            Contents:
-            <p> {{ message.content }} </p>
+            </div>
 
-            <button type="button" onclick="copy_text(this,'{{ message.sender.email}}')">Copy {{ message.sender.get_full_name }}'s Email</button>
-            <button type="button" onclick="copy_text(this,'{{ message.sending_org.official_email}}')">Copy Email of {{message.sending_org.name}}</button>
+            <div class="row g-0 align-items-center">
 
-            <hr>
+                <div class="col-md-2">
 
+                    <div class="d-grid">
+                        <button class="btn btn-outline-secondary" type="button" onclick="copy_text(this,'{{ message.sender.email}}')">Copy {{ message.sender.get_full_name }}'s Email</button>
+                        <button class="btn btn-outline-secondary" type="button" onclick="copy_text(this,'{{ message.sending_org.official_email}}')">Copy Email of {{message.sending_org.name}}</button>
+                    </div>
+                </div>
+
+                <div class="col" style="padding-left:20px">
+                    <p> {{ message.content }} </p>
+                </div>
+            </div>     
         </div>
 
     <!-- if the user's organization hasn't sent any messages -->

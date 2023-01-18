@@ -48,9 +48,7 @@ CRISPY_CLASS_CONVERTERS = {
     'select' : 'form-control',
     'selectdatewidget':'form-control',
     'clearablefileinput':'form-control',
-    'textarea':'form-control',
-    'radio': 'btn btn-outline-primary',
-    
+    'textarea':'form-control',    
     }
 
 MIDDLEWARE = [

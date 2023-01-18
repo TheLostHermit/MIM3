@@ -8,10 +8,12 @@ Sign In
 {% endblock %}
 
 {% block body %}
-    <h1 class="text-center"> Sign into an account </h1>
+    
 
     <!-- all of this is front end styling -->
     <div class="mx-auto" style="width: 50%;" align="center">
+        <h1> Sign into an account </h1>
+        <p>Sign in to your account using either your first and last name or your username.</p>
     <form action="{% url 'login' %}" method="post">
         {% csrf_token %}
         <div class="input-group mb-3">
@@ -25,7 +27,7 @@ Sign In
             <span class="input-group-text">Last Name</span>
             <input class="form-control" type="text" name="last_name" placeholder="Type your last name...">
         </div>
-
+        <b>THEN:</b>
         <div class="input-group mb-3">
         <input class="form-control" type="password" name="password" placeholder="Type your password...">
 
@@ -33,7 +35,7 @@ Sign In
         <input class="btn btn-success" type="submit" value="Log in">
         </div>
     </form>
-</div>
+    </div>
 
     <br>
 {% endblock %}
