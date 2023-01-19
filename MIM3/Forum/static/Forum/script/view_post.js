@@ -16,8 +16,8 @@ document.addEventListener("DOMContentLoaded", function () {
 function toggle_volunteer(this_button, event_id) {
 
     VOLUNTEER_OPTIONS = {
-        "is_volunteer":['volunteered', 'You volunteered for this event. Click to leave.'],
-        "not_volunteer":['not_volunteered', 'Volunteer for this event.'],
+        "is_volunteer":['volunteered', 'You joined this event. Click to leave.'],
+        "not_volunteer":['not_volunteered', 'Join this event.'],
     }
 
     const clicked_button = this_button;

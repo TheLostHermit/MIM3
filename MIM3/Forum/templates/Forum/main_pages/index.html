@@ -23,13 +23,20 @@ Home
                 <!-- the div for each post in the list -->
                 <!--N! I swapped this around without breaking it somehow wooooo-->
                 <div class="card">
+                    <div class="card-header">
+                        Posted on
+                        <!-- the timestamp for each post in the list -->
+                        {{ post.timestamp }}
+                    </div>
 
                     <!-- section which checks if an icon exists and renders it -->
                     {% if post.get_icon %}
                         <img src="{{ post.get_icon.image.url }}" alt="{{ post.get_icon.name }}" class="card-img-top">
 
                     {% else %}
-                        This post has no icon
+                        <div style="width:50%; padding-top:10%" class="mx-auto" align="center">
+                            <img src="{{ post.organization.logo.url }}" class="img-fluid" alt="{{post.organization.name}}"></a>
+                        </div>
 
                     {% endif %}
 
@@ -38,8 +45,7 @@ Home
                     <!-- the name and link to the details of every post in the list -->
                     <h2 class="card-title"> <a href="{% url 'detail_view' pk=post.pk %}">{{ post.title }}</a> </h2>
 
-                    <!-- the timestamp for each post in the list -->
-                    {{ post.timestamp }}
+                    
 
                     <!-- the first 300 characters of the body of the post. You can change the number of characters with the number -->
                     {{ post.body|truncatechars:300 }}

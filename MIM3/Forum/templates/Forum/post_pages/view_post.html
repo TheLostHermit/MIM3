@@ -17,7 +17,7 @@
 
     <!-- information about the post -->
     Written on {{ post.timestamp }} by {{ post.author }} from <a href="{% url 'organization_view' pk=post.organization.pk %}">{{ post.organization }}</a>
-
+    <hr>
     {% if post.related_images.all %}
     <div class="mx-auto" style="width: 50%;" align="center">
         <div id="image-carousel" class="carousel slide">
@@ -27,7 +27,7 @@
                 {% for image in post.related_images.all %}
                     <!-- display the image -->
                     <div class="carousel-item active">
-                        <img src="{{ image.image.url }}" class="d-block w-10 " alt="{{ image.image }}">
+                        <img src="{{ image.image.url }}" class="img-fluid" alt="{{ image.image }}">
                     </div>
                 {% empty %}
                     No images were found
@@ -45,7 +45,7 @@
             </button>
         </div>
     </div>
-
+    <hr>
     {% endif %}
 
 <!-- main content of the post -->
@@ -77,12 +77,12 @@
                 {% if event in chosen_events %}
 
                     <input type="hidden" name="event-{{event.pk}}-status" id="event-{{event.pk}}-status" value="volunteered">
-                    <button type="button" class="btn btn-outline-secondary" id="event-{{event.pk}}-btn" onclick="toggle_volunteer(this,{{event.pk}})">You volunteered for this event. Click to leave.</button>                    
+                    <button type="button" class="btn btn-outline-secondary" id="event-{{event.pk}}-btn" onclick="toggle_volunteer(this,{{event.pk}})">You joined this event. Click to leave.</button>                    
         
                 {% else %}
 
                     <input type="hidden" name="event-{{event.pk}}-status" id="event-{{event.pk}}-status" value="not_volunteered">
-                    <button type="button" class="btn btn-outline-secondary" id="event-{{event.pk}}-btn" onclick="toggle_volunteer(this,{{event.pk}})">Volunteer for this event.</button>  
+                    <button type="button" class="btn btn-outline-secondary" id="event-{{event.pk}}-btn" onclick="toggle_volunteer(this,{{event.pk}})">Join this event.</button>  
 
                 {% endif %} 
         
