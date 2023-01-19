@@ -37,11 +37,12 @@ Your Volunteered Projects
 
     <!-- If it's empty the user hasn't volunteered for anything yet -->
     {% empty %}
-        <div class="container">
 
-            <p class="text-center"> Looks like you haven't joined any projects </p>
-
-        </div>
+    <div class="mx-auto" style="width: 50%;" align="center">
+        <img src="{% static 'Forum/media/util/empty.png' %}" class="img-fluid" alt="Home">
+        <hr>
+        <h2>Looks like you haven't joined any projects</h2>
+    </div>
 
     {% endfor %}
 {% endblock %}

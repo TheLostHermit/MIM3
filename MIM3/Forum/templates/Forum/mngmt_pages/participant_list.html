@@ -59,8 +59,10 @@ Participants
         {% empty %}
 
             <div class="mx-auto" style="width: 50%;" align="center">
+                <img src="{% static 'Forum/media/util/empty.png' %}" class="img-fluid" alt="Home">
+                <hr>
                 <h2>There are no participants matching your query</h2>
-            </div>
+            </div>      
 
         {% endfor %}
 
